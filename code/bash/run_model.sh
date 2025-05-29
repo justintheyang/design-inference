@@ -16,8 +16,12 @@ tmux send-keys -t $SESSION "cd $ROOT" C-m
 
 # 3) in tmux: kick off parallel runs using the external script
 tmux send-keys -t $SESSION "
-JOBS=\$(sysctl -n hw.ncpu)
-find \"$LEVEL_DIR\" -type f -name '*.txt' \\
+# throttle to 80% of logical cores
+NCPU=\$(sysctl -n hw.ncpu)
+JOBS=\$(( NCPU * 8 / 10 ))
+(( JOBS < 1 )) && JOBS=1
+
+find \"$LEVEL_DIR\" -type f -name '*.txt' ! -name scratch.txt \\
   | xargs -n1 -P\$JOBS bash -c '$ROOT/code/bash/run_one.sh \"\$0\"'
 " C-m
 
