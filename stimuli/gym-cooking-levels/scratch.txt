@@ -1,0 +1,132 @@
+=======
+LAYOUTS
+=======
+(for one agent; onion recipe)
+-----/-
+-  -l /
+-  -o -
+*   - -
+-     -
+t     -
+-p-----
+
+(for either agents; onion recipe)
+-------
+-  l  -
+- / / -
+*     o
+- - - -
+-     -
+--p-t--
+
+(for two agents; onion recipe)
+--/-/--
+-  o  -
+-     -
+*     -
+----- -
+t     -
+-lp----
+
+(for one agent; either recipe)
+-----/-
+-  -l /
+-  -p -
+*   - -
+-     -
+t     -
+-o-----
+
+(for either agents; either recipe)
+-------
+-  l  -
+- / / -
+*     p
+- - - - 
+-     -
+--o-t--
+
+(for two agents; either recipe)
+--/-/--
+-  -  -
+-     -
+*     -
+----- -
+t     -
+-olp---
+
+(for one agent; tomato recipe)
+-----/-
+-  -l /
+-  -t -
+*   - -
+-     -
+o     -
+-p-----
+
+(for either agents; tomato recipe)
+-------
+-  l  -
+- / / -
+*     t
+- - - - 
+-     -
+--p-o--
+
+(for two agents; tomato recipe)
+--/-/--
+-  t  -
+-     -
+*     -
+----- -
+o     -
+-lp----
+
+=======
+RECIPES
+=======
+The actual recipe (within each subdirectory) is one of:
+Salad (corresponds to tomato)
+SaladOL (corresponds to onion)
+
+
+===============
+START LOCATIONS
+===============
+
+Intention for one agent:
+(actual 1 agent)
+1 1
+4 4
+4 4
+4 4
+
+(actual 2 agents)
+1 1
+2 1
+4 4
+4 4
+
+Intention for either agents:
+(actual 1 agent)
+3 2
+4 4
+4 4
+4 4
+(actual 2 agents)
+2 1
+4 1
+4 4
+4 4
+
+Intention for two agents:
+(actual 1 agent)
+3 2
+4 4
+4 4
+4 4
+(actual 2 agents)
+1 1
+5 1
+4 4
+4 4
