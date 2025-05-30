@@ -83,7 +83,7 @@ const comprehensionFailedTrial = {
   }
 };
 
-export const instructionsLoop = {
+const instructionsLoop = {
   timeline: [
     instructions, 
     {
@@ -135,3 +135,15 @@ export const instructionsLoop = {
     }
   }
 };
+
+const instructionsConclusion = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <p>Congrats! You've learned everything you need to know.</p> \
+    <p>In total, you will be making judgments for nine kitchens.</p> \
+    <p>Please click the continue button to get started. Thank you for participating!</p>`,
+  choices: ["Continue"],
+  margin_vertical: "20px"
+}
+
+export const instructionSequence = [instructionsLoop, instructionsConclusion];

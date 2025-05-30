@@ -1,5 +1,5 @@
 import { loadingSequence } from "./loading-sequence.mjs";
-import { instructionsLoop } from "./instructions.mjs";
+import { instructionSequence } from "./instructions.mjs";
 import { exitSurveySequence } from "./exit-sequence.mjs";
 import { getJsPsych } from "./jspsych-singleton.mjs";
 
@@ -55,7 +55,7 @@ export function setupGame() {
 
   let trials = [];
   trials.push(...loadingSequence([...experiment_assets, ...trial_stims]));
-  trials.push(instructionsLoop);
+  trials.push(...instructionSequence);
   trials.push(...inference_trials);
   trials.push(...exitSurveySequence);
 
