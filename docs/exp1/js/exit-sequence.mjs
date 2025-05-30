@@ -1,4 +1,7 @@
 import { settings } from "../config.mjs";
+import { getJsPsych } from "./jspsych-singleton.mjs";
+
+const jsPsych = getJsPsych();
 
 const preSurveyMessage = {
   type: jsPsychHtmlButtonResponse,
@@ -13,33 +16,28 @@ const preSurveyMessage = {
 
 const exitSurvey = {
   type: jsPsychSurvey,
-  pages: [
-    [
+  survey_json: {
+    showQuestionNumbers: false,
+    elements: [
       {
-        type: "html",
-        prompt: "Please answer the following questions:",
-      },
-      {
-        type: "multi-choice",
+        type: "dropdown",
         name: "participantGender",
-        prompt: "What is your gender?",
-        options: ["Male", "Female", "Non-binary", "Other"],
-        columns: 0,
-        required: true,
+        title: "What is your gender?",
+        choices: ["Male", "Female", "Non-binary", "Other"],
+        isRequired: true,
       },
       {
         type: "text",
         name: "participantYears",
-        prompt: "How many years old are you?",
+        title: "How many years old are you?",
         placeholder: "18",
-        textbox_columns: 5,
-        required: true,
+        isRequired: true,
       },
       {
-        type: "multi-choice",
+        type: "dropdown",
         name: "participantRace",
-        prompt: "What is your race?",
-        options: [
+        title: "What is your race?",
+        choices: [
           "White",
           "Black/African American",
           "American Indian/Alaska Native",
@@ -48,83 +46,68 @@ const exitSurvey = {
           "Multiracial/Mixed",
           "Other",
         ],
-        columns: 0,
-        required: true,
+        isRequired: true,
       },
       {
-        type: "multi-choice",
+        type: "dropdown",
         name: "participantEthnicity",
-        prompt: "What is your ethnicity?",
-        options: ["Hispanic", "Non-Hispanic"],
-        columns: 0,
-        required: true,
+        title: "What is your ethnicity?",
+        choices: ["Hispanic", "Non-Hispanic"],
+        isRequired: true,
       },
       {
-        type: "multi-choice",
+        type: "dropdown",
         name: "inputDevice",
-        prompt:
+        title:
           "Which of the following devices did you use to complete this study?",
-        options: ["Mouse", "Trackpad", "Touch Screen", "Stylus", "Other"],
-        columns: 0,
-        required: true,
+        choices: ["Mouse", "Trackpad", "Touch Screen", "Stylus", "Other"],
+        isRequired: true,
       },
       {
-        type: "likert",
+        type: "rating",
         name: "judgedDifficulty",
-        prompt: "How difficult did you find this study?",
-        likert_scale_min_label: "Very Easy",
-        likert_scale_max_label: "Very Hard",
-        likert_scale_values: [
-          { value: 1 },
-          { value: 2 },
-          { value: 3 },
-          { value: 4 },
-          { value: 5 },
-        ],
-        required: true,
+        title: "How difficult did you find this study?",
+        minRateDescription: "Very Easy",
+        maxRateDescription: "Very Hard",
+        rateValues: [1, 2, 3, 4, 5],
+        isRequired: true,
       },
       {
-        type: "likert",
+        type: "rating",
         name: "participantEffort",
-        prompt:
+        title:
           "How much effort did you put into the game? Your response will not effect your final compensation.",
-        likert_scale_min_label: "Low Effort",
-        likert_scale_max_label: "High Effort",
-        likert_scale_values: [
-          { value: 1 },
-          { value: 2 },
-          { value: 3 },
-          { value: 4 },
-          { value: 5 },
-        ],
-        required: true,
+        minRateDescription: "Low Effort",
+        maxRateDescription: "High Effort",
+        rateValues: [1, 2, 3, 4, 5],
+        isRequired: true,
       },
       {
         type: "text",
         name: "participantComments",
-        prompt:
+        title:
           "What factors influenced how you decided to respond? Do you have any other comments or feedback to share with us about your experience?",
         placeholder: "I had a lot of fun!",
-        textbox_rows: 4,
-        required: false,
+        isRequired: false,
+        size: 100,
       },
       {
         type: "text",
         name: "TechnicalDifficultiesFreeResp",
-        prompt:
+        title:
           "If you encountered any technical difficulties, please briefly describe the issue.",
         placeholder: "I did not encounter any technical difficulities.",
-        textbox_rows: 4,
-        required: false,
+        isRequired: false,
+        size: 100,
       },
     ],
-  ],
+  },
   on_start: function () {
-    gs.session_data.endExperimentTS = Date.now();
+    settings.session_data.endExperimentTS = Date.now();
   },
   on_finish: function () {
-    this.jsPsych.data.write(gs.session_data);
-  },
+    jsPsych.data.get().push(settings.session_data)
+  }
 };
 
 const saveData = {
