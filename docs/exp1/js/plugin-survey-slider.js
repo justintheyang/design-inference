@@ -1,5 +1,5 @@
-var jsPsychSurveySlider = (function(jspsych) {
-  'use strict';
+var jsPsychSurveySlider = (function (jspsych) {
+  "use strict";
 
   var version = "2.0.0";
 
@@ -17,112 +17,115 @@ var jsPsychSurveySlider = (function(jspsych) {
           stimulus: {
             type: jspsych.ParameterType.HTML_STRING,
             pretty_name: "Stimulus",
-            default: ""
+            default: "",
           },
           prompt: {
             type: jspsych.ParameterType.STRING,
             pretty_name: "Prompt",
             default: undefined,
-            description: "Content to be displayed below the stimulus and above the slider"
+            description:
+              "Content to be displayed below the stimulus and above the slider",
           },
           labels: {
             type: jspsych.ParameterType.STRING,
             pretty_name: "Labels",
             default: [],
             array: true,
-            description: "Labels of the sliders."
+            description: "Labels of the sliders.",
           },
           ticks: {
             type: jspsych.ParameterType.HTML_STRING,
             pretty_name: "Ticks",
             default: [],
             array: true,
-            description: "Ticks of the sliders."
+            description: "Ticks of the sliders.",
           },
           name: {
             type: jspsych.ParameterType.STRING,
             pretty_name: "Question Name",
             default: "",
-            description: "Controls the name of data values associated with this question"
+            description:
+              "Controls the name of data values associated with this question",
           },
           min: {
             type: jspsych.ParameterType.INT,
             pretty_name: "Min slider",
             default: 0,
-            description: "Sets the minimum value of the slider."
+            description: "Sets the minimum value of the slider.",
           },
           max: {
             type: jspsych.ParameterType.INT,
             pretty_name: "Max slider",
             default: 100,
-            description: "Sets the maximum value of the slider"
+            description: "Sets the maximum value of the slider",
           },
           slider_start: {
             type: jspsych.ParameterType.INT,
             pretty_name: "Slider starting value",
             default: 50,
-            description: "Sets the starting value of the slider"
+            description: "Sets the starting value of the slider",
           },
           step: {
             type: jspsych.ParameterType.INT,
             pretty_name: "Step",
             default: 1,
-            description: "Sets the step of the slider"
+            description: "Sets the step of the slider",
           },
           min_label: {
             type: jspsych.ParameterType.HTML_STRING,
             default: "0",
-            description: "HTML to display under the left side of the slider"
+            description: "HTML to display under the left side of the slider",
           },
           max_label: {
             type: jspsych.ParameterType.HTML_STRING,
             default: "100",
-            description: "HTML to display under the right side of the slider"
-          }
-        }
+            description: "HTML to display under the right side of the slider",
+          },
+        },
       },
       randomize_question_order: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Randomize Question Order",
         default: false,
-        description: "If true, the order of the questions will be randomized"
+        description: "If true, the order of the questions will be randomized",
       },
       preamble: {
         type: jspsych.ParameterType.HTML_STRING,
         pretty_name: "Preamble",
         default: null,
-        description: "String to display at top/left of the page."
+        description: "String to display at top/left of the page.",
       },
       button_label: {
         type: jspsych.ParameterType.STRING,
         pretty_name: "Button label",
         default: "Continue",
-        description: "Label of the button."
+        description: "Label of the button.",
       },
       autocomplete: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Allow autocomplete",
         default: false,
-        description: "Enable browser auto-complete for the form."
+        description: "Enable browser auto-complete for the form.",
       },
       require_movement: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Require movement",
         default: false,
-        description: "If true, participant must move each slider before continuing."
+        description:
+          "If true, participant must move each slider before continuing.",
       },
       slider_width: {
         type: jspsych.ParameterType.INT,
         pretty_name: "Slider width",
         default: 500,
-        description: "Width of the slider in pixels."
-      }
+        description: "Width of the slider in pixels.",
+      },
     },
     data: {
-      rt:   { type: jspsych.ParameterType.INT },
-      response:       { type: jspsych.ParameterType.STRING },
-      question_order: { type: jspsych.ParameterType.STRING }
-    }
+      rt: { type: jspsych.ParameterType.INT },
+      response: { type: jspsych.ParameterType.STRING },
+      question_order: { type: jspsych.ParameterType.STRING },
+    },
   };
 
   class SurveySliderPlugin {
@@ -142,14 +145,17 @@ var jsPsychSurveySlider = (function(jspsych) {
       }
 
       const half_thumb_width = 7.5;
-      let html = '';
+      let html = "";
 
       // wrapper + container
-      html += '<div id="jspsych-html-slider-response-wrapper" style="margin:100px 0;">';
-      html += '<div class="jspsych-html-slider-response-container" style="position:relative; margin:0 auto 3em auto; ';
-      html += trial.slider_width !== null
-        ? `width:${trial.slider_width}px;`
-        : "width:auto;";
+      html +=
+        '<div id="jspsych-html-slider-response-wrapper" style="margin:100px 0;">';
+      html +=
+        '<div class="jspsych-html-slider-response-container" style="position:relative; margin:0 auto 3em auto; ';
+      html +=
+        trial.slider_width !== null
+          ? `width:${trial.slider_width}px;`
+          : "width:auto;";
       html += '">';
 
       // open form
@@ -161,7 +167,8 @@ var jsPsychSurveySlider = (function(jspsych) {
       if (trial.preamble !== null) {
         // flex container: preamble on left, questions on right
         // html += '<div class="jspsych-survey-slider-flex" style="display:flex; align-items:flex-start;">';
-        html += '<div class="jspsych-survey-slider-flex" style="display:flex; align-items:center;">';
+        html +=
+          '<div class="jspsych-survey-slider-flex" style="display:flex; align-items:center;">';
         // LEFT COLUMN: the preamble
         html += `
           <div id="jspsych-survey-slider-preamble"
@@ -171,10 +178,12 @@ var jsPsychSurveySlider = (function(jspsych) {
           </div>`;
 
         // RIGHT COLUMN: questions stack
-        html += '<div class="jspsych-survey-slider-questions" style="flex:1; display:flex; flex-direction:column; justify-content:flex-start;">';
+        html +=
+          '<div class="jspsych-survey-slider-questions" style="flex:1; display:flex; flex-direction:column; justify-content:flex-start;">';
       } else {
         // if no preamble, just full-width questions
-        html += '<div class="jspsych-survey-slider-questions" style="display:flex; flex-direction:column;">';
+        html +=
+          '<div class="jspsych-survey-slider-questions" style="display:flex; flex-direction:column;">';
       }
 
       // determine order
@@ -188,7 +197,7 @@ var jsPsychSurveySlider = (function(jspsych) {
         const q = trial.questions[question_order[idx]];
 
         html += `<div id="jspsych-html-slider-response-stimulus">${q.stimulus}</div>`;
-        html += `<label class="jspsych-survey-slider-statement">${q.prompt}</label><br>`;
+        html += `<label class="jspsych-survey-slider-statement" style="font-size:24px;">${q.prompt}</label><br>`;
 
         // optional labels (above/below)
         if (q.labels.length > 0) {
@@ -229,10 +238,10 @@ var jsPsychSurveySlider = (function(jspsych) {
 
         // tick marks
         for (let j = 0; j < q.ticks.length; j++) {
-          const label_width_perc   = 100 / (q.ticks.length - 1);
-          const percent_of_range   = j * (100 / (q.ticks.length - 1));
-          const percent_from_center = (percent_of_range - 50) / 50 * 100;
-          const offset             = (percent_from_center * half_thumb_width) / 100;
+          const label_width_perc = 100 / (q.ticks.length - 1);
+          const percent_of_range = j * (100 / (q.ticks.length - 1));
+          const percent_from_center = ((percent_of_range - 50) / 50) * 100;
+          const offset = (percent_from_center * half_thumb_width) / 100;
           html += `
             <div style="
               position:absolute;
@@ -245,7 +254,7 @@ var jsPsychSurveySlider = (function(jspsych) {
             </div>`;
         }
 
-        html += "<br/><br/>";
+        html += idx === trial.questions.length - 1 ? "" : "<br/><br/>";
       }
 
       // close the questions column
@@ -273,32 +282,46 @@ var jsPsychSurveySlider = (function(jspsych) {
       // ── require movement logic (unchanged) ─────────────────
       if (trial.require_movement) {
         const check = () => {
-          const sliders = Array.from(document.querySelectorAll(".jspsych-slider"));
-          return sliders.every(s => s.classList.contains("clicked"));
+          const sliders = Array.from(
+            document.querySelectorAll(".jspsych-slider")
+          );
+          return sliders.every((s) => s.classList.contains("clicked"));
         };
         document.getElementById("jspsych-survey-slider-next").disabled = true;
-        document.querySelectorAll(".jspsych-slider").forEach(slider => {
-          slider.addEventListener("click",  () => { slider.classList.add("clicked"); if (check()) document.getElementById("jspsych-survey-slider-next").disabled = false; });
-          slider.addEventListener("change", () => { slider.classList.add("clicked"); if (check()) document.getElementById("jspsych-survey-slider-next").disabled = false; });
+        document.querySelectorAll(".jspsych-slider").forEach((slider) => {
+          slider.addEventListener("click", () => {
+            slider.classList.add("clicked");
+            if (check())
+              document.getElementById(
+                "jspsych-survey-slider-next"
+              ).disabled = false;
+          });
+          slider.addEventListener("change", () => {
+            slider.classList.add("clicked");
+            if (check())
+              document.getElementById(
+                "jspsych-survey-slider-next"
+              ).disabled = false;
+          });
         });
       }
 
       // ── form submission ───────────────────────────────────
       display_element
         .querySelector("#jspsych-survey-slider-form")
-        .addEventListener("submit", e => {
+        .addEventListener("submit", (e) => {
           e.preventDefault();
           const endTime = performance.now();
-          const rt      = endTime - startTime;
-          const data    = {};
+          const rt = endTime - startTime;
+          const data = {};
           document.querySelectorAll('input[type="range"]').forEach((el, i) => {
             const name = el.getAttribute("data-name") || el.name;
             data[name] = el.value;
           });
           this.jsPsych.finishTrial({
             rt,
-            response:       JSON.stringify(data),
-            question_order: JSON.stringify(question_order)
+            response: JSON.stringify(data),
+            question_order: JSON.stringify(question_order),
           });
         });
 
