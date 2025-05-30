@@ -1,18 +1,10 @@
 import { loadingSequence } from "./loading-sequence.mjs";
-import { instructions } from "./instructions.mjs";
+import { instructionsLoop } from "./instructions.mjs";
 import { exitSurveySequence } from "./exit-sequence.mjs";
-import { settings } from "../config.mjs";
+import { getJsPsych } from "./jspsych-singleton.mjs";
 
 export function setupGame() {
-  const jsPsych = initJsPsych({
-    on_start: () => {
-      settings.session_data.startExperimentTS = Date.now();
-    },
-    on_trial_finish: (data) => {
-      console.log("trial data", data);
-    },
-    show_progress_bar: true,
-  });
+  const jsPsych = getJsPsych();
 
   const experiment_assets = [
     "assets/1_cook.png",
@@ -62,8 +54,8 @@ export function setupGame() {
   });
 
   let trials = [];
-  // trials.push(...loadingSequence([...experiment_assets, ...trial_stims]));
-  // trials.push(instructions);
+  trials.push(...loadingSequence([...experiment_assets, ...trial_stims]));
+  trials.push(instructionsLoop);
   trials.push(...inference_trials);
   trials.push(...exitSurveySequence);
 
