@@ -125,6 +125,7 @@ var jsPsychSurveySlider = (function (jspsych) {
       rt: { type: jspsych.ParameterType.INT },
       response: { type: jspsych.ParameterType.STRING },
       question_order: { type: jspsych.ParameterType.STRING },
+      question_info: { type: jspsych.ParameterType.STRING },
     },
   };
 
@@ -173,7 +174,7 @@ var jsPsychSurveySlider = (function (jspsych) {
         html += `
           <div id="jspsych-survey-slider-preamble"
                class="jspsych-survey-slider-preamble"
-               style="flex:1; padding-right:20px;">
+               style="flex:1; padding-right:50px;">
             ${trial.preamble}
           </div>`;
 
@@ -219,12 +220,12 @@ var jsPsychSurveySlider = (function (jspsych) {
             id="jspsych-html-slider-response-response-${idx}"
             name="Q${idx}"
             data-name="${q.name}"
-          ></input><br>`;
+          ></input>`;
 
         // min/max HTML labels underneath
         html += `
           <div class="jspsych-slider-labels"
-               style="display:flex; justify-content:space-between; width:100%; margin-top:0.3em;">
+               style="display:flex; justify-content:space-between; width:100%; margin-top:0.7em;">
             <span>${q.min_label}</span>
             <span>${q.max_label}</span>
           </div>`;
@@ -322,6 +323,7 @@ var jsPsychSurveySlider = (function (jspsych) {
             rt,
             response: JSON.stringify(data),
             question_order: JSON.stringify(question_order),
+            questions: JSON.stringify(trial.questions),
           });
         });
 
