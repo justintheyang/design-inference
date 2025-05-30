@@ -38,5 +38,5 @@ export let settings = {
   },
   experiment_params: {
     time_estimate: 10, // in minutes
-  }
+  },
 };

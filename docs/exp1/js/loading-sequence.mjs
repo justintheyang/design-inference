@@ -12,16 +12,15 @@ const landingPage = {
   allow_backward: true,
 };
 
-
 const preload = (assets) => {
   return {
     type: jsPsychPreload,
     images: assets,
-  }
-}
+  };
+};
 
 const browserCheck = {
-  type: jsPsychBrowserCheck
+  type: jsPsychBrowserCheck,
 };
 
 const consent = {
@@ -83,10 +82,5 @@ const consent = {
 };
 
 export const loadingSequence = (assets) => {
-  return [
-    landingPage,
-    consent,
-    browserCheck,
-    preload(assets),
-  ];
-}
+  return [landingPage, consent, browserCheck, preload(assets)];
+};

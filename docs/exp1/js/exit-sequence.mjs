@@ -148,4 +148,9 @@ const goodbye = {
   },
 };
 
-export const exitSurveySequence = [preSurveyMessage, exitSurvey, saveData, goodbye];
+export const exitSurveySequence = [
+  preSurveyMessage,
+  exitSurvey,
+  saveData,
+  goodbye,
+];
