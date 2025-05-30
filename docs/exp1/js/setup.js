@@ -10,7 +10,8 @@ export function setupGame() {
     },
     on_trial_finish: (data) => {
       console.log('trial data', data)
-    }
+    },
+    show_progress_bar: true,
   });
 
   const experiment_assets = [
@@ -52,7 +53,8 @@ export function setupGame() {
           max_label: "<img src='assets/onion_lettuce.png' style='height: 60px;'>",
         },
       ],
-      require_movement: true
+      require_movement: true,
+      slider_width: 800,
     }
   })
 
