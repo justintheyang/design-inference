@@ -1,3 +1,4 @@
+import { settings } from "../config.mjs";
 let jsPsych = null;
 
 export function getJsPsych() {

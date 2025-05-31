@@ -27,14 +27,14 @@ export let settings = {
     experiment: "exp1",
     datapipe_experiment_id: "3hpe3tXu2deq",
     iteration_name: "development",
-    stimuli_index: 0,
     dev_mode: true,
-    condition: undefined, // observation, counterfactual
+    condition: undefined, // we have no between-subjects condition
   },
   session_data: {
     gameID: gameID,
     startExperimentTS: undefined,
     endExperimentTS: undefined,
+    comprehensionAttempts: 0,
   },
   experiment_params: {
     time_estimate: 10, // in minutes

@@ -108,11 +108,9 @@ const exitSurvey = {
       },
     ],
   },
-  on_start: function () {
-    settings.session_data.endExperimentTS = Date.now();
-  },
   on_finish: function () {
-    jsPsych.data.get().push(settings.session_data)
+    settings.session_data.endExperimentTS = Date.now();
+    jsPsych.data.get().push({...settings.study_metadata, ...settings.session_data});
   }
 };
 
