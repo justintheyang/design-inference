@@ -3,12 +3,10 @@ let jsPsych = null;
 
 export function getJsPsych() {
   if (!jsPsych) {
+    settings.session_data.startExperimentTS = Date.now();
     jsPsych = initJsPsych({
-      on_start: () => {
-        settings.session_data.startExperimentTS = Date.now();
-      },
       on_trial_finish: (data) => {
-        console.log("trial data", data);
+        if (settings.study_metadata.dev_mode) { console.log("trial data", data); }
       },
       show_progress_bar: true,
     });
