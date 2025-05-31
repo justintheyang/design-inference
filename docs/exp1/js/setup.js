@@ -11,6 +11,10 @@ export function setupGame() {
     "assets/2_cooks.png",
     "assets/onion_lettuce.png",
     "assets/tomato_lettuce.png",
+    "assets/instructions/1_cooking_demo.gif",
+    "assets/instructions/2_kitchen_components.png",
+    "assets/instructions/3_recipes_schematic.png",
+    "assets/instructions/4_example_trial.png",
   ];
 
   const trial_stims = [
