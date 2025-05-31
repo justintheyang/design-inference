@@ -132,6 +132,7 @@ const goodbye = {
   on_finish: () => {
     window.onbeforeunload = null;
     document.onfullscreenchange = null;
+    window.close();
   },
 };
 
