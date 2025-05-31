@@ -21,27 +21,17 @@ const instruction_pages = [
   <p>Their goal is to prepare a meal in as few steps as possible.</p>
   <img src="assets/instructions/1_cooking_demo.gif" height="350">`,
 
-  `<p>Every kitchen contains similar tools and ingredients:</p>
-   <ul>(placeholder for graphic)
-     <li>1 cutting board</li>
-     <li>1 plate</li>
-     <li>1 delivery station (marked with a star)</li>
-     <li>1 tomato, 1 onion, and 1 lettuce</li>
-   </ul>
+  `<p>Every kitchen contains the same tools and ingredients:</p>
    <img src="assets/instructions/2_kitchen_components.png" height="300">`,
 
    `<p>Some kitchens are easier for one cook to use efficiently. Others work better when two cooks are working together.</p>
-   <p>Similarly, some kitchens are designed to make specific meals.</p>
+   <p>Similarly, some kitchens are designed to make specific dishes.</p>
    <p>In this task, cooks make one of two dishes:</p>
    <img src="assets/instructions/3_recipes_schematic.png" height="300">
    `,
 
    `<p>On each trial, you'll see a picture of a kitchen with no chefs in it.</p>
-   <p>Your task is to answer two questions:</p>
-   <ul> (jank -- need to fix)
-     <li>How many cooks do you think each kitchen is best suited for?</li>
-     <li>Which dish do you think it's designed to make?</li>
-   </ul>
+   <p>Then, you'll answer two questions. For example:</p>
    <img src="assets/instructions/4_example_trial.png" height="350">`,
 
    `<p>On the next screen, you will be asked a few questions to make sure everything is clear.</p>

@@ -8,7 +8,7 @@ const preSurveyMessage = {
   stimulus: () => {
     return `<p>You've completed the experiment!\
       </br>On the next page, you'll be shown a brief set of questions about how the experiment went.\
-      </br>Once you submit your answers, your data will be recorded and I will reach out about the raffle if you win!</p>`;
+      </br>Once you submit your answers, your data will be recorded and I will reach out about the lottery if you win!</p>`;
   },
   choices: ["Continue"],
   margin_vertical: "20px",
@@ -19,6 +19,12 @@ const exitSurvey = {
   survey_json: {
     showQuestionNumbers: false,
     elements: [
+      {
+        type: "text",
+        name: "lottery",
+        title: "If you want to be entered into the lottery for some boba (or other sweet treat), please enter your email address below.",
+        isRequired: false,
+      },
       {
         type: "dropdown",
         name: "participantGender",
@@ -122,7 +128,7 @@ const goodbye = {
   type: jsPsychHtmlButtonResponse,
   stimulus: `<p>Thank you for participating in our study!</p>
              <p>Your responses have been recorded.</p>
-             <p>You may close the tab now. If you are eligible for the raffle, we will contact you via email.</p>`,
+             <p>You may close the tab now. If you win the lottery, we will contact you via email!</p>`,
   choices: ["Finish"],
   margin_vertical: "20px",
   on_finish: () => {
