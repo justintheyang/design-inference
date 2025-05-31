@@ -19,7 +19,7 @@ const instruction_pages = [
 
   `<p>In each kitchen, cooks prepare food by chopping ingredients, placing them on plates, and delivering completed dishes.</p>
   <p>Their goal is to prepare a meal in as few steps as possible.</p>
-  <img src="assets/gif/kitchen_agents.gif" height="350">`,
+  <img src="assets/instructions/1_cooking_demo.gif" height="350">`,
 
   `<p>Every kitchen contains similar tools and ingredients:</p>
    <ul>(placeholder for graphic)
@@ -28,15 +28,12 @@ const instruction_pages = [
      <li>1 delivery station (marked with a star)</li>
      <li>1 tomato, 1 onion, and 1 lettuce</li>
    </ul>
-   <img src="assets/img/kitchen_components.png" height="300">`,
+   <img src="assets/instructions/2_kitchen_components.png" height="300">`,
 
-   `<p>Some kitchens are easier for one cook to use efficiently.</p>
-   <p>Others work better when two cooks are working together.</p>
-   <img src="assets/gif/one_vs_two_agents.gif" height="350">`,
-
-  `<p>Similarly, some kitchens are designed to make specific meals.</p>
+   `<p>Some kitchens are easier for one cook to use efficiently. Others work better when two cooks are working together.</p>
+   <p>Similarly, some kitchens are designed to make specific meals.</p>
    <p>In this task, cooks make one of two dishes:</p>
-   <img src="assets/img/recipes_schematic.png" height="300">
+   <img src="assets/instructions/3_recipes_schematic.png" height="300">
    `,
 
    `<p>On each trial, you'll see a picture of a kitchen with no chefs in it.</p>
@@ -45,7 +42,7 @@ const instruction_pages = [
      <li>How many cooks do you think each kitchen is best suited for?</li>
      <li>Which dish do you think it's designed to make?</li>
    </ul>
-   <img src="assets/img/example_trial_screenshot.png" height="350">`,
+   <img src="assets/instructions/4_example_trial.png" height="350">`,
 
    `<p>On the next screen, you will be asked a few questions to make sure everything is clear.</p>
    <p>Please do your best. You\'ll need to answer correctly to move on, but can review the instructions and try again if needed.</p>`,
