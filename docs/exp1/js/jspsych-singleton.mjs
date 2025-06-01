@@ -10,6 +10,8 @@ export function getJsPsych() {
       },
       show_progress_bar: true,
     });
+
+    jsPsych.data.addProperties({gameID: settings.session_data.gameID});
   }
   return jsPsych;
 }
