@@ -126,6 +126,7 @@ var jsPsychSurveySlider = (function (jspsych) {
       response: { type: jspsych.ParameterType.STRING },
       question_order: { type: jspsych.ParameterType.STRING },
       question_info: { type: jspsych.ParameterType.STRING },
+      preamble: { type: jspsych.ParameterType.STRING },
     },
   };
 
@@ -324,6 +325,7 @@ var jsPsychSurveySlider = (function (jspsych) {
             response: JSON.stringify(data),
             question_order: JSON.stringify(question_order),
             questions: JSON.stringify(trial.questions),
+            questions: JSON.stringify(trial.preamble),
           });
         });
 
