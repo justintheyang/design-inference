@@ -32,6 +32,8 @@ fi
 # 4) prepare output dirs
 record_dir="$RECORD_ROOT/$subdir/$base/seed=$seed"
 mkdir -p "$record_dir"
+export OVERCOOKED_RECORD_ROOT="$record_dir"
+
 outdir="$PICKLE_ROOT/$subdir"
 mkdir -p "$outdir"
 prefix="${base}-seed${seed}"
