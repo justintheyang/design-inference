@@ -23,7 +23,7 @@ const gameID = UUID();
 
 export let settings = {
   study_metadata: {
-    project: "design-inference",
+    project: "design_inference",
     experiment: "exp1",
     datapipe_experiment_id: "3hpe3tXu2deq",
     iteration_name: "pilot_local",
