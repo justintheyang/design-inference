@@ -1,5 +1,6 @@
 .DS_Store
 data/models/records/*
 data/models/pickles/*
+data/model/gifs/**/*.gif
 **/.ipynb_checkpoints/
 **/__pycache__/*
