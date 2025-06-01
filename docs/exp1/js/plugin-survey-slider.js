@@ -325,7 +325,7 @@ var jsPsychSurveySlider = (function (jspsych) {
             response: JSON.stringify(data),
             question_order: JSON.stringify(question_order),
             questions: JSON.stringify(trial.questions),
-            questions: JSON.stringify(trial.preamble),
+            preamble: JSON.stringify(trial.preamble),
           });
         });
 
