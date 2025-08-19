@@ -27,7 +27,7 @@ export let settings = {
     experiment: "exp1",
     datapipe_experiment_id: "3hpe3tXu2deq",
     iteration_name: "pilot_local_2",
-    dev_mode: false,
+    dev_mode: true,
     condition: null, // we have no between-subjects condition
   },
   session_data: {
