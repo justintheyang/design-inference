@@ -29,7 +29,8 @@ for level_file in "$STIMULI_ROOT"/*.txt; do
     --level "$level_file" \
     --num-agents 0 \
     --record \
-    --layout
+    --layout \
+    --num-start-locations 2
 done
 
 conda activate base
