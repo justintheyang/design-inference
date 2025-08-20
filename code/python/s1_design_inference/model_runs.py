@@ -12,8 +12,7 @@ LEVEL_DIR = ROOT / "stimuli" / EXPERIMENT
 TXT_DIR = LEVEL_DIR / "txt"
 METADATA_CSV = LEVEL_DIR / "trials_metadata.csv"
 
-PICKLE_ROOT = ROOT / "data" / "models" / "pickles" / EXPERIMENT
-RECORD_ROOT = ROOT / "data" / "models" / "records" / EXPERIMENT
+DATA_ROOT = ROOT / "data" / "models" / EXPERIMENT
 
 PYTHON = "python"
 MAIN_PY = ROOT / "gym-cooking" / "gym_cooking" / "main.py"
@@ -34,14 +33,13 @@ def ensure_dirs(*paths: Path):
         p.mkdir(parents=True, exist_ok=True)
 
 def build_cmd(level: Path, num_agents: int, seed: int, outdir: Path, prefix: str,
-              models: List[str], recipe: Optional[str], record_dir: Path):
+              models: List[str], recipe: Optional[str]):
     env = os.environ.copy()
     # single-thread heavy libs for CPU parallel
     env["OMP_NUM_THREADS"] = "1"
     env["MKL_NUM_THREADS"] = "1"
     env["OPENBLAS_NUM_THREADS"] = "1"
     env["NUMEXPR_NUM_THREADS"] = "1"
-    env["OVERCOOKED_RECORD_ROOT"] = str(record_dir)
 
     cmd = [
         PYTHON, str(MAIN_PY),
@@ -76,7 +74,7 @@ def main():
     seeds = list(range(1, args.seeds + 1))
     rows = read_metadata(args.metadata)
 
-    tasks = []  # (level, na, seed, outdir, prefix, models, recipe, record_dir)
+    tasks = []  # (level, na, seed, outdir, prefix, models, recipe)
 
     for r in rows:
         trial_id = r["trial_id"]
@@ -85,7 +83,7 @@ def main():
         if not level_path.exists():
             raise FileNotFoundError(f"Missing level file: {level_path}")
 
-        pickle_dir = PICKLE_ROOT
+        data_dir = DATA_ROOT
 
         if trial_type == "cooks":
             run_specs = [
@@ -98,33 +96,32 @@ def main():
             ]
             for spec in run_specs:
                 for seed in seeds:
-                    prefix = f"{trial_id}-{spec['label']}-seed{seed}"
-                    record_dir = RECORD_ROOT / trial_id / spec["label"] / f"seed={seed}"
-                    tasks.append((level_path, spec["na"], seed, pickle_dir, prefix,
-                                  spec["models"], spec["recipe"], record_dir))
+                    prefix = f"{trial_id}-{spec['label']}"
+                    tasks.append((level_path, spec["na"], seed, data_dir, prefix,
+                                  spec["models"], spec["recipe"]))
 
         elif trial_type == "dish":
             # single-agent greedy with two recipes
             for recipe in ("Salad", "SaladOL"):
                 label = f"agents=1-model=greedy-recipe={recipe}"
                 for seed in seeds:
-                    prefix = f"{trial_id}-{label}-seed{seed}"
-                    record_dir = RECORD_ROOT / trial_id / label / f"seed={seed}"
-                    tasks.append((level_path, 1, seed, pickle_dir, prefix,
-                                  ["greedy", None, None, None], recipe, record_dir))
+                    prefix = f"{trial_id}-{label}"
+                    tasks.append((level_path, 1, seed, data_dir, prefix,
+                                  ["greedy", None, None, None], recipe))
         else:
             raise ValueError(f"Unknown trial_type '{trial_type}' for trial_id={trial_id}")
 
     # Ensure dirs
-    for _, _, _, outdir, _, _, _, record_dir in tasks:
-        ensure_dirs(outdir, record_dir)
+    for _, _, seed, outdir, prefix, _, _ in tasks:
+        pickle_dir = Path(os.path.join(outdir, 'pickles', prefix, f'seed={seed}'))
+        ensure_dirs(outdir, pickle_dir)
 
     futures, rcodes = [], []
     with ThreadPoolExecutor(max_workers=args.jobs) as ex:
         for t in tasks:
-            level, na, seed, outdir, prefix, models, recipe, record_dir = t
+            level, na, seed, outdir, prefix, models, recipe = t
             log_header(level, seed, na, models, recipe)
-            cmd, env = build_cmd(level, na, seed, outdir, prefix, models, recipe, record_dir)
+            cmd, env = build_cmd(level, na, seed, outdir, prefix, models, recipe)
             if args.dry_run:
                 print("DRY-RUN:", " ".join(cmd))
                 rcodes.append(0)
