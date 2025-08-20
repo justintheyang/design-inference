@@ -113,8 +113,8 @@ def main():
 
     # Ensure dirs
     for _, _, seed, outdir, prefix, _, _ in tasks:
-        pickle_dir = Path(os.path.join(outdir, 'pickles', prefix, f'seed={seed}'))
-        ensure_dirs(outdir, pickle_dir)
+        record_dir = Path(os.path.join(outdir, 'records', prefix, f'seed={seed}'))
+        ensure_dirs(outdir, record_dir)
 
     futures, rcodes = [], []
     with ThreadPoolExecutor(max_workers=args.jobs) as ex:
