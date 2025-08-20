@@ -67,7 +67,7 @@ def main():
     ap = argparse.ArgumentParser(description="S1 Design Inference model runs (CPU-parallel)")
     ap.add_argument("--metadata", type=Path, default=METADATA_CSV)
     ap.add_argument("--seeds", type=int, default=20, help="Run seeds 1..N")
-    ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4, help="Parallel processes")
+    ap.add_argument("--jobs", type=int, default=os.cpu_count() * 0.8, help="Parallel processes")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
