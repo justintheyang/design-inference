@@ -7,12 +7,13 @@ from typing import Optional, List
 
 # Project roots
 ROOT = Path(__file__).resolve().parents[3]
-LEVEL_DIR = ROOT / "stimuli" / "s1_design_inference"
+EXPERIMENT = "s1_design_inference"
+LEVEL_DIR = ROOT / "stimuli" / EXPERIMENT
 TXT_DIR = LEVEL_DIR / "txt"
 METADATA_CSV = LEVEL_DIR / "trials_metadata.csv"
 
-PICKLE_ROOT = ROOT / "data" / "models" / "pickles"
-RECORD_ROOT = ROOT / "data" / "models" / "records"
+PICKLE_ROOT = ROOT / "data" / "models" / "pickles" / EXPERIMENT
+RECORD_ROOT = ROOT / "data" / "models" / "records" / EXPERIMENT
 
 PYTHON = "python"
 MAIN_PY = ROOT / "gym-cooking" / "gym_cooking" / "main.py"
