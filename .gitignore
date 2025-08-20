@@ -1,5 +1,5 @@
 .DS_Store
-data/models/records/*
+data/models/**/records/*
 data/models/pickles/*
 data/models/gifs/**/*.gif
 **/.ipynb_checkpoints/
