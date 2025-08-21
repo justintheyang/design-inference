@@ -67,7 +67,7 @@ def main():
     ap = argparse.ArgumentParser(description="S1 Design Inference model runs (CPU-parallel)")
     ap.add_argument("--metadata", type=Path, default=METADATA_CSV)
     ap.add_argument("--seeds", type=int, default=20, help="Run seeds 1..N")
-    ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4, help="Parallel processes")
+    ap.add_argument("--jobs", type=int, default=os.cpu_count() * 0.8, help="Parallel processes")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
@@ -113,8 +113,8 @@ def main():
 
     # Ensure dirs
     for _, _, seed, outdir, prefix, _, _ in tasks:
-        pickle_dir = Path(os.path.join(outdir, 'pickles', prefix, f'seed={seed}'))
-        ensure_dirs(outdir, pickle_dir)
+        record_dir = Path(os.path.join(outdir, 'records', prefix, f'seed={seed}'))
+        ensure_dirs(outdir, record_dir)
 
     futures, rcodes = [], []
     with ThreadPoolExecutor(max_workers=args.jobs) as ex:
