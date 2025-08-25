@@ -28,7 +28,7 @@ export let settings = {
     datapipe_experiment_id: "3hpe3tXu2deq",
     iteration_name: "pilot_local_2",
     dev_mode: true,
-    condition: 'cooks', // we have no between-subjects condition
+    condition: null, // we have no between-subjects condition
   },
   session_data: {
     gameID: gameID,
