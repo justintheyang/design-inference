@@ -2,6 +2,7 @@ import { loadingSequence } from "./loading-sequence.mjs";
 import { instructionSequence } from "./instructions.mjs";
 import { exitSurveySequence } from "./exit-sequence.mjs";
 import { getJsPsych } from "./jspsych-singleton.mjs";
+import { settings } from "../config.mjs";
 
 export function setupGame() {
   const jsPsych = getJsPsych();
@@ -17,16 +18,18 @@ export function setupGame() {
     "assets/instructions/4_example_trial.png",
   ];
 
-  const trial_stims = [
-    "assets/stims/1agent-onion.png",
-    "assets/stims/1agent-tomato.png",
-    "assets/stims/1agent-either_recipe.png",
-    "assets/stims/2agent-onion.png",
-    "assets/stims/2agent-tomato.png",
-    "assets/stims/2agent-either_recipe.png",
-    "assets/stims/either_agents-onion.png",
-    "assets/stims/either_agents-tomato.png",
-    "assets/stims/either_agents-either_recipe.png",
+  // TODO: need if statement: if cooks, take first 18 else take last 18
+    // TODO: copy trial_01-36 to the assets/stims folder
+    const trial_stims = [
+    // "assets/stims/1agent-onion.png",
+    // "assets/stims/1agent-tomato.png",
+    // "assets/stims/1agent-either_recipe.png",
+    // "assets/stims/2agent-onion.png",
+    // "assets/stims/2agent-tomato.png",
+    // "assets/stims/2agent-either_recipe.png",
+    // "assets/stims/either_agents-onion.png",
+    // "assets/stims/either_agents-tomato.png",
+    // "assets/stims/either_agents-either_recipe.png",
   ];
 
   // trial objects
