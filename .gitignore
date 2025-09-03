@@ -2,7 +2,7 @@
 data/models/**/records/*
 data/models/**/pickles/*
 data/models/instructions/screenshots/*
-data/models/gifs/**/*.gif
+data/models/**/*.gif
 **/.ipynb_checkpoints/
 **/__pycache__/*
 *.idea
