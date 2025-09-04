@@ -35,7 +35,7 @@ export NUMEXPR_NUM_THREADS=1
 
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
-OUTDIR="${OUTDIR:-$SCRATCH/design-inference/s1_design_inference}"
+OUTDIR="${OUTDIR:-/scratch/users/$USER/design-inference/${EXP}}"
 
 # ensure dirs
 mkdir -p "$OUTDIR" "$OUTDIR/logs"
