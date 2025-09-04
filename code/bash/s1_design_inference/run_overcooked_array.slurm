@@ -48,7 +48,7 @@ if [[ -z "${CMD:-}" ]]; then
 fi
 
 echo "Running: $CMD"
-srun bash -lc "$CMD"
+srun /bin/bash -lc "$CMD"
 
 echo "Done"
 date

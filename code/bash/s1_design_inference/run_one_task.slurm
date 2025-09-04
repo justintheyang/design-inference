@@ -45,4 +45,4 @@ if [[ -z "${CMD:-}" ]]; then
 fi
 
 echo "Running [INDEX=$INDEX]: $CMD"
-srun bash -lc "$CMD"
+srun /bin/bash -lc "$CMD"
