@@ -2,8 +2,8 @@
 #SBATCH --job-name=overcooked-one
 #SBATCH --output=logs/%x.%j.out
 #SBATCH --error=logs/%x.%j.err
-#SBATCH --partition=normal
-#SBATCH --time=04:00:00
+#SBATCH --partition=dev
+#SBATCH --time=03:00:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
 
