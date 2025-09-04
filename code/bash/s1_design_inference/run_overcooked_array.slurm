@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=overcooked-arr
-#SBATCH --output=logs/%x.%A_%a.out
-#SBATCH --error=logs/%x.%A_%a.err
+#SBATCH --output=$SCRATCH/design-inference/s1_design_inference/logs/%x.%A_%a.out
+#SBATCH --error=$SCRATCH/design-inference/s1_design_inference/logs/%x.%A_%a.err
 #SBATCH --partition=hns
 #SBATCH --time=06:00:00
 #SBATCH --cpus-per-task=1
@@ -38,7 +38,7 @@ TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
 OUTDIR="${OUTDIR:-$SCRATCH/design-inference/s1_design_inference}"
 
 # ensure dirs
-mkdir -p "$OUTDIR" "$PROJECT_DIR/logs"
+mkdir -p "$OUTDIR" "$OUTDIR/logs"
 cd "$PROJECT_DIR"
 
 # ----- Map array index → tasks.txt line via OFFSET -----

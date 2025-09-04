@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=overcooked-one
-#SBATCH --output=logs/%x.%j.out
-#SBATCH --error=logs/%x.%j.err
+#SBATCH --output=$SCRATCH/design-inference/s1_design_inference/logs/%x.%j.out
+#SBATCH --error=$SCRATCH/design-inference/s1_design_inference/logs/%x.%j.err
 #SBATCH --partition=dev
 #SBATCH --time=02:00:00
 #SBATCH --cpus-per-task=1
@@ -37,7 +37,7 @@ OUTDIR="${OUTDIR:-$SCRATCH/design-inference/s1_design_inference}"
 
 INDEX="${INDEX:?Set INDEX (1-based), e.g., sbatch --export=INDEX=5 code/bash/s1_design_inference/run_one_task.slurm}"
 
-mkdir -p "$OUTDIR" "$PROJECT_DIR/logs"
+mkdir -p "$OUTDIR" "$OUTDIR/logs"
 cd "$PROJECT_DIR"
 
 CMD="$(sed -n "${INDEX}p" "$TASKS_FILE")"
