@@ -1,50 +1,36 @@
+# code/bash/s1_design_inference/gen_tasks.sh
 #!/usr/bin/env bash
-#SBATCH --job-name=overcooked-arr
-#SBATCH --output=logs/%x.%A_%a.out
-#SBATCH --error=logs/%x.%A_%a.err
-#SBATCH --partition=normal
-#SBATCH --time=02:00:00
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=6G
-
 set -euo pipefail
-echo "Array $SLURM_ARRAY_JOB_ID task $SLURM_ARRAY_TASK_ID on $SLURM_NODELIST"
-date
 
-# Python 3.9 (Sherlock module) + user site
+# --- CONFIG ---
+PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
+EXP="${EXP:-s1_design_inference}"
+TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/tasks.txt}"
+SEEDS="${SEEDS:-20}"   # override: SEEDS=... code/bash/s1_design_inference/gen_tasks.sh
+
+# Sherlock Python 3.9 + user site
 module --force purge; module load python/3.9
 export PATH="$HOME/.local/bin:$PATH"
 PY_USER_SITE="$(python3 -c 'import site; print(site.getusersitepackages())')"
-export PYTHONPATH="$PY_USER_SITE:$PYTHONPATH"
+export PYTHONPATH="${PY_USER_SITE}:${PYTHONPATH-}"
 
-# Headless + no BLAS oversub
 export SDL_VIDEODRIVER=dummy
 export MPLBACKEND=Agg
-export OMP_NUM_THREADS=1
-export MKL_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
-export NUMEXPR_NUM_THREADS=1
 
-PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
-TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/tasks.txt}"
+cd "$PROJECT_DIR"
 
-# Scratch working dir per task
-RUN_DIR="$SCRATCH/design-overcooked/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
-mkdir -p "$RUN_DIR" "$PROJECT_DIR/logs"
-
-rsync -a --delete \
-  --exclude='.git' --exclude='.gitmodules' --exclude='__pycache__' \
-  "$PROJECT_DIR/" "$RUN_DIR/"
-cd "$RUN_DIR"
-
-# Pick and run the Nth command
-CMD="$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$TASKS_FILE")"
-if [[ -z "${CMD:-}" ]]; then
-  echo "No command for index $SLURM_ARRAY_TASK_ID" >&2
+ORCH="code/python/${EXP}/model_runs.py"
+if [[ ! -f "$ORCH" ]]; then
+  echo "ERROR: Orchestrator not found: $ORCH" >&2
   exit 1
 fi
-echo "Running: $CMD"
-srun bash -lc "$CMD"
 
-echo "Done"
-date
+echo "[gen] building task list → $TASKS_FILE"
+python3 "$ORCH" --seeds "$SEEDS" --jobs 1 --dry-run \
+| awk '/^DRY-RUN:/{sub(/^DRY-RUN:[ ]*/,""); print}' \
+| sed 's/^python[[:space:]]/python3 /' \
+> "$TASKS_FILE"
+
+NLINES=$(wc -l < "$TASKS_FILE")
+echo "[gen] wrote $NLINES tasks to $TASKS_FILE"
+head -3 "$TASKS_FILE" || true
