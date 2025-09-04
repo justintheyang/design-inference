@@ -3,9 +3,9 @@
 #SBATCH --output=/scratch/users/%u/design-inference/s1_design_inference/logs/%x.%A_%a.out
 #SBATCH --error=/scratch/users/%u/design-inference/s1_design_inference/logs/%x.%A_%a.err
 #SBATCH --partition=hns
-#SBATCH --time=06:00:00
+#SBATCH --time=12:00:00
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=4G
+#SBATCH --mem=12G
 
 set -euo pipefail
 echo "Array $SLURM_ARRAY_JOB_ID task $SLURM_ARRAY_TASK_ID on $SLURM_NODELIST"
@@ -35,22 +35,51 @@ export NUMEXPR_NUM_THREADS=1
 
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
-OUTDIR="${OUTDIR:-/scratch/users/$USER/design-inference/s1_design_inference}"
+OUTDIR_DEFAULT="${OUTDIR:-/scratch/users/$USER/design-inference/s1_design_inference}"
+OVERWRITE_RESULTS="${OVERWRITE_RESULTS:-0}"   # 1 = force rerun even if pickle exists
 
 # ensure dirs
-mkdir -p "$OUTDIR" "$OUTDIR/logs"
+mkdir -p "$OUTDIR_DEFAULT" "$OUTDIR_DEFAULT/logs"
 cd "$PROJECT_DIR"
 
 # ----- Map array index → tasks.txt line via OFFSET -----
 OFFSET="${OFFSET:-0}"
 LINE_IDX=$(( SLURM_ARRAY_TASK_ID + OFFSET ))
-CMD="$(sed -n "${LINE_IDX}p" "$TASKS_FILE")"
+CMD="$(sed -n "${LINE_IDX}p" "$TASKS_FILE" || true)"
 if [[ -z "${CMD:-}" ]]; then
   echo "No command for line $LINE_IDX (OFFSET=$OFFSET, TASK_ID=$SLURM_ARRAY_TASK_ID)" >&2
-  exit 1
+  exit 0
+fi
+
+# ----- Parse expected output pickle path from the command -----
+# Assumes no spaces in values; true for our args.
+read -r -a TOKS <<< "$CMD"
+get_arg() {
+  local key="$1"
+  local i
+  for ((i=0;i<${#TOKS[@]};i++)); do
+    if [[ "${TOKS[$i]}" == "$key" && $((i+1)) -lt ${#TOKS[@]} ]]; then
+      printf '%s\n' "${TOKS[$((i+1))]}"
+      return 0
+    fi
+  done
+  return 1
+}
+
+OUTDIR_CMD="$(get_arg --output-dir || true)"
+PREFIX="$(get_arg --output-prefix || true)"
+SEED="$(get_arg --seed || true)"
+OUTDIR_EFF="${OUTDIR_CMD:-$OUTDIR_DEFAULT}"
+PICKLE="${OUTDIR_EFF}/pickles/${PREFIX}-seed=${SEED}.pkl"
+
+# Skip if the expected pickle exists (unless OVERWRITE_RESULTS=1)
+if [[ "${OVERWRITE_RESULTS}" != "1" ]] && [[ -n "${PREFIX:-}" && -n "${SEED:-}" && -f "$PICKLE" ]]; then
+  echo "SKIP (already exists): $PICKLE"
+  exit 0
 fi
 
 echo "Running (line $LINE_IDX): $CMD"
+echo "Expected pickle: ${PICKLE}"
 srun --export=ALL /bin/bash -c "$CMD"
 
 echo "Done"
