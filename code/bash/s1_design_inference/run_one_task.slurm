@@ -12,7 +12,7 @@ set -euo pipefail
 # --- Lmod / Python module (robust) ---
 source /share/software/user/open/lmod/lmod/init/bash
 module --ignore_cache purge
-module --ignore_cache load python/3.9.0 || module --ignore_cache load python/3.12.1
+module --ignore_cache load python/3.9.0
 
 # User-site packages first
 export PATH="$HOME/.local/bin:$PATH"
