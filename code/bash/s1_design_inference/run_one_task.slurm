@@ -24,24 +24,22 @@ unset PYTHONNOUSERSITE
 # ----- Headless + 1-threaded BLAS -----
 export SDL_VIDEODRIVER=dummy
 export MPLBACKEND=Agg
+export SDL_AUDIODRIVER=dummy
+export AUDIODRIVER=dummy
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
-# ----- Inputs -----
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
+OUTDIR="${OUTDIR:-$SCRATCH/design-inference/s1_design_inference}"
+
 INDEX="${INDEX:?Set INDEX (1-based), e.g., sbatch --export=INDEX=5 code/bash/s1_design_inference/run_one_task.slurm}"
 
-# ----- Stage to scratch -----
-RUN_DIR="$SCRATCH/design-overcooked/test_$SLURM_JOB_ID"
-mkdir -p "$RUN_DIR" "$PROJECT_DIR/logs"
-rsync -a --delete --exclude='.git' --exclude='.gitmodules' --exclude='__pycache__' \
-  "$PROJECT_DIR/" "$RUN_DIR/"
-cd "$RUN_DIR"
+mkdir -p "$OUTDIR" "$PROJECT_DIR/logs"
+cd "$PROJECT_DIR"
 
-# ----- Resolve the Nth command -----
 CMD="$(sed -n "${INDEX}p" "$TASKS_FILE")"
 if [[ -z "${CMD:-}" ]]; then
   echo "No command for index $INDEX" >&2
@@ -49,5 +47,4 @@ if [[ -z "${CMD:-}" ]]; then
 fi
 
 echo "Running [INDEX=$INDEX]: $CMD"
-# Run via bash (non-login) with exported env
 srun --export=ALL /bin/bash -c "$CMD"

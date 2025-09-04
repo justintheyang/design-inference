@@ -4,8 +4,9 @@ set -euo pipefail
 # --- CONFIG ---
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 EXP="${EXP:-s1_design_inference}"
-TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/${EXP}/tasks.txt}"   # <── changed
+TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/${EXP}/tasks.txt}"
 SEEDS="${SEEDS:-20}"   # override via: SEEDS=50 code/bash/s1_design_inference/gen_tasks.sh
+OUTDIR="${OUTDIR:-$SCRATCH/design-inference/${EXP}}"   # <- write results to SCRATCH
 
 # --- Lmod / Python module (robust) ---
 source /share/software/user/open/lmod/lmod/init/bash
@@ -29,13 +30,21 @@ if [[ ! -f "$ORCH" ]]; then
   exit 1
 fi
 
-mkdir -p "$(dirname "$TASKS_FILE")"   # ensure target folder exists
+mkdir -p "$(dirname "$TASKS_FILE")" "$OUTDIR"
 
 echo "[gen] building task list → $TASKS_FILE"
 python3 "$ORCH" --seeds "$SEEDS" --jobs 1 --dry-run \
 | awk '/^DRY-RUN:/{sub(/^DRY-RUN:[ ]*/,""); print}' \
 | sed 's/^python[[:space:]]/python3 /' \
-> "$TASKS_FILE"
+| awk -v outdir="$OUTDIR" '
+  # replace the value that follows --output-dir with our SCRATCH path
+  {
+    for (i=1; i<=NF; i++) {
+      if ($i=="--output-dir" && (i+1)<=NF) { $(i+1)=outdir }
+    }
+    print
+  }
+' > "$TASKS_FILE"
 
 NLINES=$(wc -l < "$TASKS_FILE" || echo 0)
 echo "[gen] wrote $NLINES tasks to $TASKS_FILE"

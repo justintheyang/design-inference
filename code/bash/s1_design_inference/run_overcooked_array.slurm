@@ -2,10 +2,10 @@
 #SBATCH --job-name=overcooked-arr
 #SBATCH --output=logs/%x.%A_%a.out
 #SBATCH --error=logs/%x.%A_%a.err
-#SBATCH --partition=normal
-#SBATCH --time=02:00:00
+#SBATCH --partition=hns
+#SBATCH --time=06:00:00
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=2G
+#SBATCH --mem=4G
 
 set -euo pipefail
 echo "Array $SLURM_ARRAY_JOB_ID task $SLURM_ARRAY_TASK_ID on $SLURM_NODELIST"
@@ -26,6 +26,8 @@ unset PYTHONNOUSERSITE
 # ----- Headless + 1-threaded BLAS -----
 export SDL_VIDEODRIVER=dummy
 export MPLBACKEND=Agg
+export SDL_AUDIODRIVER=dummy
+export AUDIODRIVER=dummy
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
@@ -33,16 +35,14 @@ export NUMEXPR_NUM_THREADS=1
 
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
+OUTDIR="${OUTDIR:-$SCRATCH/design-inference/s1_design_inference}"
 
-# ----- Per-task scratch working dir -----
-RUN_DIR="$SCRATCH/design-overcooked/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
-mkdir -p "$RUN_DIR" "$PROJECT_DIR/logs"
-rsync -a --delete --exclude='.git' --exclude='.gitmodules' --exclude='__pycache__' \
-  "$PROJECT_DIR/" "$RUN_DIR/"
-cd "$RUN_DIR"
+# ensure dirs
+mkdir -p "$OUTDIR" "$PROJECT_DIR/logs"
+cd "$PROJECT_DIR"
 
 # ----- Map array index → tasks.txt line via OFFSET -----
-OFFSET="${OFFSET:-0}"                   # lines to skip at the top of tasks.txt
+OFFSET="${OFFSET:-0}"
 LINE_IDX=$(( SLURM_ARRAY_TASK_ID + OFFSET ))
 CMD="$(sed -n "${LINE_IDX}p" "$TASKS_FILE")"
 if [[ -z "${CMD:-}" ]]; then
