@@ -4,7 +4,7 @@ set -euo pipefail
 # --- CONFIG ---
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 EXP="${EXP:-s1_design_inference}"
-TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/tasks.txt}"
+TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/${EXP}/tasks.txt}"   # <── changed
 SEEDS="${SEEDS:-20}"   # override via: SEEDS=50 code/bash/s1_design_inference/gen_tasks.sh
 
 # --- Lmod / Python module (robust) ---
@@ -28,6 +28,8 @@ if [[ ! -f "$ORCH" ]]; then
   echo "ERROR: Orchestrator not found: $ORCH" >&2
   exit 1
 fi
+
+mkdir -p "$(dirname "$TASKS_FILE")"   # ensure target folder exists
 
 echo "[gen] building task list → $TASKS_FILE"
 python3 "$ORCH" --seeds "$SEEDS" --jobs 1 --dry-run \

@@ -30,7 +30,7 @@ export OPENBLAS_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
-TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/tasks.txt}"
+TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
 
 # Per-task scratch working dir
 RUN_DIR="$SCRATCH/design-overcooked/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
