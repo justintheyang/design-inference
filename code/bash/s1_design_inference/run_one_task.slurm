@@ -33,7 +33,7 @@ export NUMEXPR_NUM_THREADS=1
 
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
-OUTDIR="${OUTDIR:-/scratch/users/$USER/design-inference/${EXP}}"
+OUTDIR="${OUTDIR:-/scratch/users/$USER/design-inference/s1_design_inference}"
 
 INDEX="${INDEX:?Set INDEX (1-based), e.g., sbatch --export=INDEX=5 code/bash/s1_design_inference/run_one_task.slurm}"
 
