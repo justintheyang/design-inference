@@ -4,7 +4,7 @@ set -euo pipefail
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/tasks.txt}"
 SEEDS="${SEEDS:-20}"
-CONCURRENCY="${CONCURRENCY:-200}"     # max concurrent tasks
+CONCURRENCY="${CONCURRENCY:-100}"     # max concurrent tasks
 
 # 1) Build tasks
 "$PROJECT_DIR/code/bash/s1_design_inference/gen_tasks.sh"
