@@ -2,33 +2,32 @@
 set -euo pipefail
 
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
+GEN="${GEN:-$PROJECT_DIR/code/bash/s1_design_inference/gen_tasks.sh}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
 SLURM_FILE="${SLURM_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/run_overcooked_array.slurm}"
 
-# Tune these if needed
-CHUNK="${CHUNK:-900}"          # number of tasks per array submission (≤ cluster array size cap)
-CONCURRENCY="${CONCURRENCY:-200}" # how many run concurrently per array
+# tuneables
+CHUNK="${CHUNK:-900}"            # tasks per array (≤ site array cap)
+CONCURRENCY="${CONCURRENCY:-200}"# tasks running per array
+SEEDS="${SEEDS:-20}"             # pass through to generator
 
-# 1. Regenerate tasks
-SEEDS="${SEEDS:-20}" "$PROJECT_DIR/code/bash/s1_design_inference/gen_tasks.sh"
+# 1) (re)generate tasks
+SEEDS="$SEEDS" "$GEN"
 
 NLINES=$(wc -l < "$TASKS_FILE")
-if [[ "$NLINES" -le 0 ]]; then
-  echo "No tasks found in $TASKS_FILE"; exit 2
-fi
+(( NLINES > 0 )) || { echo "No tasks in $TASKS_FILE"; exit 2; }
 
-echo "Submitting $NLINES tasks in chunks of $CHUNK (max concurrent $CONCURRENCY per chunk)"
+# 2) compute chunk count and submit all
+CHUNKS=$(( (NLINES + CHUNK - 1) / CHUNK ))
+echo "Submitting $NLINES tasks in $CHUNKS chunk(s) of up to $CHUNK (%$CONCURRENCY)"
 
-i=0
-while (( i * CHUNK < NLINES )); do
+for ((i=0; i<CHUNKS; i++)); do
   OFFSET=$(( i * CHUNK ))
-  REMAIN=$(( NLINES - OFFSET ))
-  SPAN=$(( REMAIN < CHUNK ? REMAIN : CHUNK ))
+  SPAN=$(( NLINES - OFFSET ))
+  (( SPAN > CHUNK )) && SPAN=$CHUNK
   ARR_SPEC="1-${SPAN}%${CONCURRENCY}"
-
-  echo "Chunk $((i+1)): lines $((OFFSET+1))..$((OFFSET+SPAN)), OFFSET=$OFFSET, ARRAY=$ARR_SPEC"
+  echo "Chunk $((i+1))/$CHUNKS: lines $((OFFSET+1))..$((OFFSET+SPAN)), OFFSET=$OFFSET, ARRAY=$ARR_SPEC"
   sbatch --export=OFFSET="$OFFSET" --array="$ARR_SPEC" "$SLURM_FILE"
-  (( i++ ))
 done
 
 echo "All chunks submitted."
