@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=overcooked-arr
-#SBATCH --output=$SCRATCH/design-inference/s1_design_inference/logs/%x.%A_%a.out
-#SBATCH --error=$SCRATCH/design-inference/s1_design_inference/logs/%x.%A_%a.err
+#SBATCH --output=/scratch/users/%u/design-inference/s1_design_inference/logs/%x.%A_%a.out
+#SBATCH --error=/scratch/users/%u/design-inference/s1_design_inference/logs/%x.%A_%a.err
 #SBATCH --partition=hns
 #SBATCH --time=06:00:00
 #SBATCH --cpus-per-task=1
