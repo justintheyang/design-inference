@@ -7,9 +7,9 @@ TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
 SLURM_FILE="${SLURM_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/run_overcooked_array.slurm}"
 
 # tuneables
-CHUNK="${CHUNK:-900}"            # tasks per array (≤ site array cap)
-CONCURRENCY="${CONCURRENCY:-200}"# tasks running per array
-SEEDS="${SEEDS:-20}"             # pass through to generator
+CHUNK="${CHUNK:-900}"             # tasks per array (≤ site array cap)
+CONCURRENCY="${CONCURRENCY:-200}" # tasks running per array
+SEEDS="${SEEDS:-20}"              # pass through to generator
 
 # 1) (re)generate tasks
 SEEDS="$SEEDS" "$GEN"
