@@ -3,7 +3,7 @@
 #SBATCH --output=logs/%x.%A_%a.out
 #SBATCH --error=logs/%x.%A_%a.err
 #SBATCH --partition=normal
-#SBATCH --time=03:00:00
+#SBATCH --time=02:00:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
 
@@ -11,17 +11,19 @@ set -euo pipefail
 echo "Array $SLURM_ARRAY_JOB_ID task $SLURM_ARRAY_TASK_ID on $SLURM_NODELIST"
 date
 
-# --- Lmod / Python module (robust) ---
+# ----- Modules (robust) -----
 source /share/software/user/open/lmod/lmod/init/bash
 module --ignore_cache purge
 module --ignore_cache load python/3.9.0 || module --ignore_cache load python/3.12.1
 
-# User-site packages first
+# ----- Python user-site visibility -----
 export PATH="$HOME/.local/bin:$PATH"
-PY_USER_SITE="$(python3 -c 'import site; print(site.getusersitepackages())')"
-export PYTHONPATH="${PY_USER_SITE}:${PYTHONPATH-}"
+PY_USER_SITE="$(python3 -m site --user-site)"
+export PYTHONUSERBASE="$HOME/.local"
+export PYTHONPATH="$PY_USER_SITE:${PYTHONPATH-}"
+unset PYTHONNOUSERSITE
 
-# Headless + no BLAS oversub
+# ----- Headless + 1-threaded BLAS -----
 export SDL_VIDEODRIVER=dummy
 export MPLBACKEND=Agg
 export OMP_NUM_THREADS=1
@@ -32,15 +34,14 @@ export NUMEXPR_NUM_THREADS=1
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/code/bash/s1_design_inference/tasks.txt}"
 
-# Per-task scratch working dir
+# ----- Per-task scratch working dir -----
 RUN_DIR="$SCRATCH/design-overcooked/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
 mkdir -p "$RUN_DIR" "$PROJECT_DIR/logs"
-rsync -a --delete \
-  --exclude='.git' --exclude='.gitmodules' --exclude='__pycache__' \
+rsync -a --delete --exclude='.git' --exclude='.gitmodules' --exclude='__pycache__' \
   "$PROJECT_DIR/" "$RUN_DIR/"
 cd "$RUN_DIR"
 
-# Pick the Nth command
+# ----- Pick and run the Nth command -----
 CMD="$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$TASKS_FILE")"
 if [[ -z "${CMD:-}" ]]; then
   echo "No command for index $SLURM_ARRAY_TASK_ID" >&2
@@ -48,7 +49,7 @@ if [[ -z "${CMD:-}" ]]; then
 fi
 
 echo "Running: $CMD"
-srun /bin/bash -lc "$CMD"
+srun --export=ALL /bin/bash -c "$CMD"
 
 echo "Done"
 date
