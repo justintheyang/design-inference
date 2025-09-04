@@ -41,14 +41,16 @@ rsync -a --delete --exclude='.git' --exclude='.gitmodules' --exclude='__pycache_
   "$PROJECT_DIR/" "$RUN_DIR/"
 cd "$RUN_DIR"
 
-# ----- Pick and run the Nth command -----
-CMD="$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$TASKS_FILE")"
+# ----- Map array index → tasks.txt line via OFFSET -----
+OFFSET="${OFFSET:-0}"                   # lines to skip at the top of tasks.txt
+LINE_IDX=$(( SLURM_ARRAY_TASK_ID + OFFSET ))
+CMD="$(sed -n "${LINE_IDX}p" "$TASKS_FILE")"
 if [[ -z "${CMD:-}" ]]; then
-  echo "No command for index $SLURM_ARRAY_TASK_ID" >&2
+  echo "No command for line $LINE_IDX (OFFSET=$OFFSET, TASK_ID=$SLURM_ARRAY_TASK_ID)" >&2
   exit 1
 fi
 
-echo "Running: $CMD"
+echo "Running (line $LINE_IDX): $CMD"
 srun --export=ALL /bin/bash -c "$CMD"
 
 echo "Done"
