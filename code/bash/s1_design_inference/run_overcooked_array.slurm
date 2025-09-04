@@ -47,7 +47,7 @@ OFFSET="${OFFSET:-0}"
 LINE_IDX=$(( SLURM_ARRAY_TASK_ID + OFFSET ))
 CMD="$(sed -n "${LINE_IDX}p" "$TASKS_FILE" || true)"
 if [[ -z "${CMD:-}" ]]; then
-  echo "No command for line $LINE_IDX (OFFSET=$OFFSET, TASK_ID=$SLURM_ARRAY_TASK_ID)" >&2
+  echo "No command for line $LINE_IDX (OFFSET=$OFFSET, TASK_ID=$SLURM_ARRAY_TASK_ID)"
   exit 0
 fi
 
@@ -55,8 +55,7 @@ fi
 # Assumes no spaces in values; true for our args.
 read -r -a TOKS <<< "$CMD"
 get_arg() {
-  local key="$1"
-  local i
+  local key="$1"; local i
   for ((i=0;i<${#TOKS[@]};i++)); do
     if [[ "${TOKS[$i]}" == "$key" && $((i+1)) -lt ${#TOKS[@]} ]]; then
       printf '%s\n' "${TOKS[$((i+1))]}"
