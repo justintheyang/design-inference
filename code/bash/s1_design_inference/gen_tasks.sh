@@ -1,4 +1,3 @@
-# code/bash/s1_design_inference/gen_tasks.sh
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -6,14 +5,19 @@ set -euo pipefail
 PROJECT_DIR="${PROJECT_DIR:-$HOME/src/design-inference}"
 EXP="${EXP:-s1_design_inference}"
 TASKS_FILE="${TASKS_FILE:-$PROJECT_DIR/tasks.txt}"
-SEEDS="${SEEDS:-20}"   # override: SEEDS=... code/bash/s1_design_inference/gen_tasks.sh
+SEEDS="${SEEDS:-20}"   # override via: SEEDS=50 code/bash/s1_design_inference/gen_tasks.sh
 
-# Sherlock Python 3.9 + user site
-module --force purge; module load python/3.9
+# --- Lmod / Python module (robust) ---
+source /share/software/user/open/lmod/lmod/init/bash
+module --ignore_cache purge
+module --ignore_cache load python/3.9.0 || module --ignore_cache load python/3.12.1
+
+# User-site visibility
 export PATH="$HOME/.local/bin:$PATH"
 PY_USER_SITE="$(python3 -c 'import site; print(site.getusersitepackages())')"
 export PYTHONPATH="${PY_USER_SITE}:${PYTHONPATH-}"
 
+# Headless graphics
 export SDL_VIDEODRIVER=dummy
 export MPLBACKEND=Agg
 
@@ -31,6 +35,6 @@ python3 "$ORCH" --seeds "$SEEDS" --jobs 1 --dry-run \
 | sed 's/^python[[:space:]]/python3 /' \
 > "$TASKS_FILE"
 
-NLINES=$(wc -l < "$TASKS_FILE")
+NLINES=$(wc -l < "$TASKS_FILE" || echo 0)
 echo "[gen] wrote $NLINES tasks to $TASKS_FILE"
-head -3 "$TASKS_FILE" || true
+head -3 "$TASKS_FILE" 2>/dev/null || true
