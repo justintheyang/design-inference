@@ -14,7 +14,7 @@ METADATA_CSV = LEVEL_DIR / "trials_metadata.csv"
 
 DATA_ROOT = ROOT / "data" / "models" / EXPERIMENT
 
-PYTHON = "python"
+PYTHON = "python3"
 MAIN_PY = ROOT / "gym-cooking" / "gym_cooking" / "main.py"
 
 def read_metadata(csv_path: Path):
