@@ -1,8 +1,9 @@
 .DS_Store
 data/models/**/records/*
 data/models/**/pickles/*
+data/models/**/logs/*
+data/models/**/gifs/*
 **/instructions/screenshots/*
-data/models/**/*.gif
 **/.ipynb_checkpoints/
 **/__pycache__/*
 *.idea
