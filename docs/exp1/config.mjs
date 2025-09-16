@@ -21,14 +21,33 @@ function UUID() {
 
 const gameID = UUID();
 
+// Parse URL parameters
+function getUrlParameter(name) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(name);
+}
+
+// Get condition from URL parameter (0=cooks, 1=dish)
+function getConditionFromUrl() {
+  const conditionParam = getUrlParameter('condition');
+  if (conditionParam === '0') {
+    return 'cooks';
+  } else if (conditionParam === '1') {
+    return 'dish';
+  } else {
+    // Default to cooks if no parameter or invalid parameter
+    return 'cooks';
+  }
+}
+
 export let settings = {
   study_metadata: {
     project: "design_inference",
-    experiment: "exp1",
-    datapipe_experiment_id: "3hpe3tXu2deq",
-    iteration_name: "pilot_local_2",
+    experiment: "s1_design_inference",
+    datapipe_experiment_id: "e7h3xs0D9Mhj",
+    iteration_name: "dev",
     dev_mode: true,
-    condition: "cooks", // we have no between-subjects condition
+    condition: getConditionFromUrl(),
   },
   session_data: {
     gameID: gameID,
