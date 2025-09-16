@@ -54,7 +54,7 @@ const getInstructionPages = () => {
 
     // Page 8a: Condition-specific content
     `${condition === "cooks" ? `
-    <p>Cooks can either work alone or collaborate with another cook to make the salad. Some kitchens are designed for cooks to work alone. Others are designed for collaboration.</p>
+    <p>Cooks can either work alone or collaborate with another cook to make the salad. Some kitchens are designed for one cook to work alone. Others are designed for two cooks.</p>
     <p>Cooks can use counter spaces to pass ingredients and plates to each other over. This includes normal counters, cutting boards, and also food dispensers!</p>
     <img src="assets/instructions/cooks_passing.gif" height="300">` : `
     <p>Some kitchens are designed to make an onion salad. Others are designed to make a tomato salad.</p>
@@ -66,14 +66,14 @@ const getInstructionPages = () => {
     <img src="assets/instructions/cooks_collision.gif" height="300">`] : []),
 
     // Page 9: Examples
-    `<p>To get a better understanding of how this works, take a look at how ${condition === "cooks" ? "one or two chefs make a salad." : "these chefs make an onion and a tomato salad"}</p>
+    `<p>To get a better understanding of how this works, take a look at how ${condition === "cooks" ? "one or two cooks make a salad." : "these cooks make an onion and a tomato salad"}</p>
     <img src="assets/instructions/${condition === "cooks" ? "cooks_collaboration1.gif" : "onion_salad_demo2.gif"}" height="300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <img src="assets/instructions/${condition === "cooks" ? "cooks_collaboration2.gif" : "onion_tomato_demo.gif"}" height="300">`,
 
     // Page 10: Task description
     `<p>Your task is to look at a set of kitchen layouts and answer ${condition === "cooks" ? "how many cooks it was designed for." : "which dish it was designed for."}</p>${condition === "cooks" ? `
-    <p>If there is one chef, they will always start on the blue square. If there are two chefs, the second chef will start in the green square.</p>` : `<p>The blue square shows the starting location of the chef.</p>`}
-    <img src="assets/instructions/${condition === "cooks" ? "cooks_starting_positions.png" : "dishes_starting_positions.png"}" height="400">`,
+    <p>If there is one cook, they will always start on the blue square. If there are two cooks, the second cook will start on the green square.</p>` : `<p>The blue square shows the starting location of the cook.</p>`}
+    <img src="assets/instructions/${condition === "cooks" ? "demo_trial_cook.png" : "demo_trial_dish.png"}" height="400">`,
   ];
 };
 
