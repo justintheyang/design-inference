@@ -67,6 +67,7 @@ export async function setupGame() {
       questions: question,
       require_movement: true,
       slider_width: 800,
+      post_trial_gap: 500
     };
   });
 

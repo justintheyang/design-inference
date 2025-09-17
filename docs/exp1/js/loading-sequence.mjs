@@ -66,12 +66,9 @@ const consent = {
     " the study. </p>" +
     "<p><b>Contact information:</b> If you have any questions," +
     " concerns, or complaints about this research study, its" +
-    " procedures, or risks and benefits, you can contact" +
-    " Justin Yang" +
-    " (justin.yang@stanford.edu). </p>" +
-    // " procedures, or risks and benefits, you can contact the" +
-    // " Protocol Director, Professor Tobias Gerstenberg" +
-    // " (gerstenberg@stanford.edu). </p>" +
+    " procedures, or risks and benefits, you can contact the" +
+    " Protocol Director, Professor Tobias Gerstenberg" +
+    " (gerstenberg@stanford.edu). </p>" +
     " <p> By clicking the button below, you acknowledge that" +
     " you have read the above information, that you are 18 years" +
     " of age or older, and that you give your consent to participate" +

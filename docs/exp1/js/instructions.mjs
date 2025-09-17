@@ -106,11 +106,11 @@ const getComprehensionQuestions = () => {
       required: true
     },
     {
-      prompt: "True or False: Ingredients may be combined and plated in any order.",
+      prompt: "True or False: The vegetables must be combined prior to being plated.",
       name: "platingOrder",
       options: [
-        "True, there is no particular order for combining and plating a dish.",
-        "False, the vegetables must be combined prior to being plated."
+        "True, the vegetables must be combined prior to being plated.",
+        "False, ingredients may be combined and plated in any order."
       ],
       required: true
     },
@@ -138,11 +138,11 @@ const getComprehensionQuestions = () => {
         required: true
       },
       {
-        prompt: "True or False: Cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers.",
+        prompt: "True or False: Cooks can directly hand ingredients and plates to each other without placing them down first.",
         name: "cooksPassing",
         options: [
-          "True, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers.",
-          "False, cooks can directly hand ingredients and plates to each other without placing them down first."
+          "True, cooks can directly hand ingredients and plates to each other without placing them down first.",
+          "False, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers."
         ],
         required: true
       }
@@ -178,11 +178,11 @@ const comprehensionFailedTrial = {
     const condition = settings.study_metadata.condition;
     if (
       responses.fewSteps === "True, cooks try to take as few steps as possible to complete an order." &&
-      responses.platingOrder === "True, there is no particular order for combining and plating a dish." &&
+      responses.platingOrder === "False, ingredients may be combined and plated in any order." &&
       responses.counterPlacement === "True, it is possible for ingredients to be placed on empty counters." &&
       (condition === "cooks" ? 
         responses.agentDesign === "True, some kitchens are designed for one cook, while others are designed for two cooks." &&
-        responses.cooksPassing === "True, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers." : 
+        responses.cooksPassing === "False, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers." : 
         responses.recipeDesign === "True, some kitchens are designed for one dish, while others are designed for the other dish."
       )
     ) {
@@ -210,14 +210,14 @@ const instructionsLoop = {
     // Base questions that are always checked
     const baseCorrect = (
       responses.fewSteps === "True, cooks try to take as few steps as possible to complete an order." &&
-      responses.platingOrder === "True, there is no particular order for combining and plating a dish." &&
+      responses.platingOrder === "False, ingredients may be combined and plated in any order." &&
       responses.counterPlacement === "True, it is possible for ingredients to be placed on empty counters."
     );
     
     if (condition === "cooks") {
       const cooksCorrect = (
         responses.agentDesign === "True, some kitchens are designed for one cook, while others are designed for two cooks." &&
-        responses.cooksPassing === "True, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers."
+        responses.cooksPassing === "False, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers."
       );
       if (baseCorrect && cooksCorrect) {
         return false;
