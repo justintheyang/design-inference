@@ -175,6 +175,7 @@ const comprehensionFailedTrial = {
   ],
   conditional_function: function() {
     const responses = getFromLastTrial("survey-multi-choice", "response");
+    const condition = settings.study_metadata.condition;
     if (
       responses.fewSteps === "True, cooks try to take as few steps as possible to complete an order." &&
       responses.platingOrder === "True, there is no particular order for combining and plating a dish." &&
