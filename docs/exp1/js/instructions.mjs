@@ -74,6 +74,10 @@ const getInstructionPages = () => {
     `<p>Your task is to look at a set of kitchen layouts and answer ${condition === "cooks" ? "how many cooks it was designed for." : "which dish it was designed for."}</p>${condition === "cooks" ? `
     <p>If there is one cook, they will always start on the blue square. If there are two cooks, the second cook will start on the green square.</p>` : `<p>The blue square shows the starting location of the cook.</p>`}
     <img src="assets/instructions/${condition === "cooks" ? "demo_trial_cook.png" : "demo_trial_dish.png"}" height="400">`,
+
+    // Page 11: Comprehension check
+    `<p>On the next screen, you will be asked a few questions to make sure everything is clear.</p>
+    <p>Please do your best. You\'ll need to answer correctly to move on, but can review the instructions and try again if needed.</p>`
   ];
 };
 
@@ -88,37 +92,19 @@ export const getInstructions = () => {
   };
 };
 
-const comprehensionFailedTrial = {
-  timeline: [
-    {
-      type: jsPsychHtmlButtonResponse,
-      stimulus: `<p>Unfortunately, you did not answer all the questions correctly.</p> \
-                 <p>Please review the instructions and try again.</p>`,
-      choices: ["Try Again"],
-      margin_vertical: "20px"
-    }
-  ],
-  conditional_function: function() {
-    const responses = getFromLastTrial("survey-multi-choice", "response");
-    if (
-      responses.platingOrder === "True, there is no particular order for combining and plating a dish." &&
-      responses.counterPlacement === "True, it is possible for ingredients to be placed on empty counters." &&
-      responses.recipeFlexibility === "True, it is possible for either dish to be made in all kitchens." &&
-      responses.agentDesign === "True, some kitchens are designed for one cook, while others are designed for two cooks." &&
-      responses.recipeDesign === "True, some kitchens are designed for one dish, while others are designed for the other dish." &&
-      responses.collisionAvoidance === "True, one cook cannot collide with another cook."
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-};
-
 const getComprehensionQuestions = () => {
   const condition = settings.study_metadata.condition;
   
   const baseQuestions = [
+    {
+      prompt: "True or False: Cooks try to take as few steps as possible to complete an order.",
+      name: "fewSteps",
+      options: [
+        "True, cooks try to take as few steps as possible to complete an order.",
+        "False, cooks do not try to minimize the number of steps they take to complete an order."
+      ],
+      required: true
+    },
     {
       prompt: "True or False: Ingredients may be combined and plated in any order.",
       name: "platingOrder",
@@ -143,7 +129,7 @@ const getComprehensionQuestions = () => {
     return [
       ...baseQuestions,
       {
-        prompt: "True or False: Some kitchens are better designed for one cook, while others are designed for two cooks.",
+        prompt: "True or False: Some kitchens are designed for one cook, while others are designed for two cooks.",
         name: "agentDesign",
         options: [
           "True, some kitchens are designed for one cook, while others are designed for two cooks.",
@@ -152,11 +138,11 @@ const getComprehensionQuestions = () => {
         required: true
       },
       {
-        prompt: "True or False: Two cooks cannot step on the same space at the same time.",
-        name: "collisionAvoidance",
+        prompt: "True or False: Cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers.",
+        name: "cooksPassing",
         options: [
-          "True, one cook cannot collide with another cook.",
-          "False, cooks may occasionally take up the same space in a kitchen while tending to different subtasks."
+          "True, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers.",
+          "False, cooks can directly hand ingredients and plates to each other without placing them down first."
         ],
         required: true
       }
@@ -164,15 +150,6 @@ const getComprehensionQuestions = () => {
   } else if (condition === "dish") {
     return [
       ...baseQuestions,
-      {
-        prompt: "True or False: It is possible for either dish to be made in all kitchens.",
-        name: "recipeFlexibility",
-        options: [
-          "True, it is possible for either dish to be made in all kitchens.",
-          "False, in some kitchens it is impossible to make one of the dishes."
-        ],
-        required: true
-      },
       {
         prompt: "True or False: Some kitchens are designed for one dish, while others are designed for the other dish.",
         name: "recipeDesign",
@@ -183,6 +160,35 @@ const getComprehensionQuestions = () => {
         required: true
       }
     ];
+  }
+};
+
+const comprehensionFailedTrial = {
+  timeline: [
+    {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p>Unfortunately, you did not answer all the questions correctly.</p> \
+                 <p>Please review the instructions and try again.</p>`,
+      choices: ["Try Again"],
+      margin_vertical: "20px"
+    }
+  ],
+  conditional_function: function() {
+    const responses = getFromLastTrial("survey-multi-choice", "response");
+    if (
+      responses.fewSteps === "True, cooks try to take as few steps as possible to complete an order." &&
+      responses.platingOrder === "True, there is no particular order for combining and plating a dish." &&
+      responses.counterPlacement === "True, it is possible for ingredients to be placed on empty counters." &&
+      (condition === "cooks" ? 
+        responses.agentDesign === "True, some kitchens are designed for one cook, while others are designed for two cooks." &&
+        responses.cooksPassing === "True, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers." : 
+        responses.recipeDesign === "True, some kitchens are designed for one dish, while others are designed for the other dish."
+      )
+    ) {
+      return false;
+    } else {
+      return true;
+    }
   }
 };
 
@@ -202,6 +208,7 @@ const instructionsLoop = {
     
     // Base questions that are always checked
     const baseCorrect = (
+      responses.fewSteps === "True, cooks try to take as few steps as possible to complete an order." &&
       responses.platingOrder === "True, there is no particular order for combining and plating a dish." &&
       responses.counterPlacement === "True, it is possible for ingredients to be placed on empty counters."
     );
@@ -209,7 +216,7 @@ const instructionsLoop = {
     if (condition === "cooks") {
       const cooksCorrect = (
         responses.agentDesign === "True, some kitchens are designed for one cook, while others are designed for two cooks." &&
-        responses.collisionAvoidance === "True, one cook cannot collide with another cook."
+        responses.cooksPassing === "True, cooks can only pass ingredients and plates to each other by placing them down on counters, cutting boards, and food dispensers."
       );
       if (baseCorrect && cooksCorrect) {
         return false;
@@ -219,7 +226,6 @@ const instructionsLoop = {
       }
     } else if (condition === "dish") {
       const dishCorrect = (
-        responses.recipeFlexibility === "True, it is possible for either dish to be made in all kitchens." &&
         responses.recipeDesign === "True, some kitchens are designed for one dish, while others are designed for the other dish."
       );
       if (baseCorrect && dishCorrect) {
