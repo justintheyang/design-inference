@@ -125,6 +125,7 @@ const goodbye = {
   on_finish: () => {
     window.onbeforeunload = null;
     document.onfullscreenchange = null;
+    // TODO: redirect to prolific
   },
 };
 

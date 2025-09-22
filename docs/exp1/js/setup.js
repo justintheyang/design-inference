@@ -67,7 +67,14 @@ export async function setupGame() {
       questions: question,
       require_movement: true,
       slider_width: 800,
-      post_trial_gap: 500
+      post_trial_gap: 500,
+      on_start: () => {
+        jsPsych.progressBar.message = `Kitchen ${i + 1} of ${selected_stims.length}`;
+        jsPsych.progressBar.update();
+      },
+      on_finish: () => {
+        jsPsych.progressBar.progress = Math.min(jsPsych.progressBar.progress + 1 / selected_stims.length, 1);
+      }
     };
   });
 

@@ -1,4 +1,4 @@
-var jsPsychSurveySlider = (function (jspsych) {
+var  = (function (jspsych) {
   "use strict";
 
   var version = "2.0.0";

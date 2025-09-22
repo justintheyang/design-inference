@@ -23,7 +23,7 @@ const getInstructionPages = () => {
     <p>Your task is to judge how each kitchen was designed to be used.</p>`,
 
     // Page 2: Overview and demo
-    `<p>In each kitchen, cooks try to prepare a salad while taking as few steps as possible.</p>
+    `<p>In each kitchen, cooks try to take as few steps as possible to prepare a salad.</p>
     <p>In the figure below, a cook is making a salad using a tomato and a lettuce.</p>
     <img src="assets/instructions/${condition === "cooks" ? "tomato_salad_demo.gif" : "lettuce_salad_demo.gif"}" height="300">`,
 
@@ -44,7 +44,7 @@ const getInstructionPages = () => {
 
     // Page 6: Combining and plating
     `<p>After the ingredients are chopped, they can be put on a plate and combined into a salad.</p>
-    <p>Ingredients may be combined and plated in any order. For example, in the left graphic, the cook first combines the ingredients together before putting it on the plate. On the right, the cook first plates the chopped lettuce before adding in the tomato.</p>
+    <p>Ingredients may be combined and plated in any order. For example, in the left video, the cook first combines the ingredients together before putting it on the plate. In the right video, the cook first plates the chopped lettuce before adding in the tomato.</p>
     <img src="assets/instructions/plating_order1.gif" height="300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <img src="assets/instructions/plating_order2.gif" height="300">`,
 
@@ -55,14 +55,14 @@ const getInstructionPages = () => {
     // Page 8a: Condition-specific content
     `${condition === "cooks" ? `
     <p>Cooks can either work alone or collaborate with another cook to make the salad. Some kitchens are designed for one cook to work alone. Others are designed for two cooks.</p>
-    <p>Cooks can use counter spaces to pass ingredients and plates to each other over. This includes normal counters, cutting boards, and also food dispensers!</p>
+    <p>Cooks can use counter spaces to pass ingredients and plates to each other over. This includes being able to use normal counters, as well as cutting boards and food dispensers as well!</p>
     <img src="assets/instructions/cooks_passing.gif" height="300">` : `
     <p>Some kitchens are designed to make an onion salad. Others are designed to make a tomato salad.</p>
     <img src="assets/instructions/dishes_comparison.png" height="300">`}`,
 
     // Page 8b: Cooks collision (only for cooks condition)
     ...(condition === "cooks" ? [`
-    <p>But watch your surroundings — two cooks cannot occupy the same space and can block each other from getting where they want!</p>
+    <p>Cooks need to be careful when working together — two cooks cannot occupy the same space and can block each other from getting where they want!</p>
     <img src="assets/instructions/cooks_collision.gif" height="300">`] : []),
 
     // Page 9: Examples
@@ -77,7 +77,7 @@ const getInstructionPages = () => {
 
     // Page 11: Comprehension check
     `<p>On the next screen, you will be asked a few questions to make sure everything is clear.</p>
-    <p>Please do your best. You\'ll need to answer correctly to move on, but can review the instructions and try again if needed.</p>`
+    <p>You\'ll need to answer correctly to move on, but can review the instructions and try again if needed.</p>`
   ];
 };
 
@@ -243,7 +243,7 @@ const instructionsConclusion = {
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <p>Congrats! You've learned everything you need to know.</p> \
-    <p>In total, you will be making judgments for nine kitchens.</p> \
+    <p>In total, you will be making judgments for 18 kitchens.</p> \
     <p>Please click the continue button to get started. Thank you for participating!</p>`,
   choices: ["Continue"],
   margin_vertical: "20px"

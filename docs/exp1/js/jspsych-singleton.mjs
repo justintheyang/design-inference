@@ -9,6 +9,8 @@ export function getJsPsych() {
         if (settings.study_metadata.dev_mode) { console.log("trial data", data); }
       },
       show_progress_bar: true,
+      auto_update_progress_bar: false,
+      message_progress_bar: 'Instructions'
     });
 
     jsPsych.data.addProperties({gameID: settings.session_data.gameID});
