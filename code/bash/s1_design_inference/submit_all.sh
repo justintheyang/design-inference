@@ -26,6 +26,8 @@ case "${2-}" in regen)     REGEN=1     ;; esac
 # 1) (re)generate tasks.txt if asked/missing
 if [[ ! -f "$TASKS_FILE" || "$REGEN" == "1" ]]; then
   echo "[gen] building task list → $TASKS_FILE"
+  # Clear cache when regenerating
+  rm -f "${PROJECT_DIR}/code/bash/${EXP}/start_location_cache.json"
   SEEDS="$SEEDS" "$GEN"
 else
   echo "[gen] using existing $TASKS_FILE (REGEN=0)"
