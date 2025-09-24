@@ -229,7 +229,7 @@ def optimize_cooks_trial(trial_info, num_seeds=3):
     Optimize start locations for a "cooks" trial by testing both candidate locations.
     Returns dict with agent1_location, agent2_location, and optimization data.
     """
-    level_file = trial_info['level_file']
+    level_file = trial_info['layout_abspath']
 
     # Get candidate locations
     loc1, loc2 = get_candidate_locations(level_file)
@@ -292,7 +292,7 @@ def process_dish_trial(trial_info):
     Process a "dish" trial by getting the single start location.
     Returns dict with agent1_location only.
     """
-    level_file = trial_info['level_file']
+    level_file = trial_info['layout_abspath']
 
     print(f"Getting start location for {trial_info['trial_id']} (dish trial)")
 
@@ -330,14 +330,13 @@ def main():
     # Read trials metadata
     trials = read_trials_metadata(args.metadata)
 
-    # Set level file paths
+    # Set level file paths and verify they exist
     for trial in trials:
-        trial['level_file'] = str(args.txt_dir / f"{trial['trial_id']}.txt")
-
-        # Verify level file exists
-        if not Path(trial['level_file']).exists():
-            print(f"Error: Level file not found: {trial['level_file']}")
+        layout_file = args.txt_dir / f"{trial['trial_id']}.txt"
+        if not layout_file.exists():
+            print(f"Error: Level file not found: {layout_file}")
             return 1
+        trial['layout_abspath'] = str(layout_file)
 
     # Process all trials
     results = []
@@ -349,11 +348,11 @@ def main():
             print(f"  [DRY RUN] Would process {trial['trial_id']}")
             continue
 
-        # Base result structure
+        # Base result structure (use relative path for portability)
         result = {
             'trial_id': trial['trial_id'],
             'trial_type': trial['trial_type'],
-            'layout_path': trial['level_file']
+            'layout_path': f"stimuli/s1_design_inference/txt/{trial['trial_id']}.txt"
         }
 
         if trial['trial_type'] == 'cooks':

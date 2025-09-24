@@ -43,10 +43,10 @@ fi
 echo "[gen] building task list → $TASKS_FILE"
 
 # First, generate the base task list
-python3 "$ORCH" --seeds "$SEEDS" --jobs 1 --dry-run \
-|| awk '/^DRY-RUN:/{sub(/^DRY-RUN:[ ]*/,""); print}' \
-|| sed 's/^python[[:space:]]/python3 /' \
-|| awk -v outdir="$OUTDIR" '
+python3 "$ORCH" --seeds "$SEEDS" --jobs 1 --dry-run 2>/dev/null \
+| awk '/^DRY-RUN:/{sub(/^DRY-RUN:[ ]*/,""); print}' \
+| sed 's/^python[[:space:]]/python3 /' \
+| awk -v outdir="$OUTDIR" '
   # replace the value that follows --output-dir with our SCRATCH path
   {
     for (i=1; i<=NF; i++) {
