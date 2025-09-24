@@ -23,11 +23,27 @@ REGEN="${REGEN:-0}"               # 1 = rebuild tasks.txt first
 case "${1-}" in overwrite) OVERWRITE=1 ;; esac
 case "${2-}" in regen)     REGEN=1     ;; esac
 
-# 1) (re)generate tasks.txt if asked/missing
+# 1) Ensure start locations are computed before running model jobs
+START_LOCATIONS_FILE="${PROJECT_DIR}/code/bash/s1_design_inference/start_locations.json"
+if [[ ! -f "$START_LOCATIONS_FILE" || "$REGEN" == "1" ]]; then
+  echo "[start] computing optimal start locations for all trials..."
+  START_LOCATIONS_SLURM="${PROJECT_DIR}/code/bash/s1_design_inference/run_optimization.slurm"
+  if [[ -f "$START_LOCATIONS_SLURM" && "$SLURM_JOB_ID" != "" ]]; then
+    # We're already in SLURM, submit the start location job
+    sbatch "$START_LOCATIONS_SLURM"
+    echo "[start] start location job submitted. Please wait for completion before running main jobs."
+    exit 0
+  else
+    echo "[start] computing start locations locally..."
+    cd "$PROJECT_DIR" && python3 code/python/s1_design_inference/find_start_locations.py \
+      --output "$START_LOCATIONS_FILE" \
+      --seeds 3
+  fi
+fi
+
+# 2) (re)generate tasks.txt if asked/missing
 if [[ ! -f "$TASKS_FILE" || "$REGEN" == "1" ]]; then
   echo "[gen] building task list → $TASKS_FILE"
-  # Clear cache when regenerating
-  rm -f "${PROJECT_DIR}/code/bash/${EXP}/start_location_cache.json"
   SEEDS="$SEEDS" "$GEN"
 else
   echo "[gen] using existing $TASKS_FILE (REGEN=0)"
