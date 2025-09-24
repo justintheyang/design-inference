@@ -28,7 +28,7 @@ START_LOCATIONS_FILE="${PROJECT_DIR}/code/bash/s1_design_inference/start_locatio
 if [[ ! -f "$START_LOCATIONS_FILE" || "$REGEN" == "1" ]]; then
   echo "[start] computing optimal start locations for all trials..."
   START_LOCATIONS_SLURM="${PROJECT_DIR}/code/bash/s1_design_inference/run_optimization.slurm"
-  if [[ -f "$START_LOCATIONS_SLURM" && "$SLURM_JOB_ID" != "" ]]; then
+  if [[ -f "$START_LOCATIONS_SLURM" && "${SLURM_JOB_ID:-}" != "" ]]; then
     # We're already in SLURM, submit the start location job
     sbatch "$START_LOCATIONS_SLURM"
     echo "[start] start location job submitted. Please wait for completion before running main jobs."
