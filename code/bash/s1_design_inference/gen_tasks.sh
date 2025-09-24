@@ -78,7 +78,7 @@ for item in start_locations_data:
     location_cache[item['trial_id']] = item
 
 # Process each line in the task file
-with open('${TASKS_FILE}.txt', 'r') as f:
+with open('${TASKS_FILE}', 'r') as f:
     for line in f:
         line = line.strip()
         if not line:
