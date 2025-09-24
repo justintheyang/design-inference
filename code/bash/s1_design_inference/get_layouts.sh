@@ -53,7 +53,7 @@ ROOT="$( cd "$SCRIPT_DIR/../../.." && pwd )"
 # paths under ROOT
 STIMULI_ROOT="${ROOT}/stimuli/s1_design_inference/txt"
 LAYOUT_ROOT="${ROOT}/stimuli/s1_design_inference/layouts"
-OPTIMIZATION_OUTPUT="${SCRIPT_DIR}/optimization_results.json"
+START_LOCATIONS_FILE="${SCRIPT_DIR}/start_locations.json"
 TASKS_FILE="${SCRIPT_DIR}/layouts_tasks.txt"
 
 export OVERCOOKED_RECORD_ROOT="$LAYOUT_ROOT"
@@ -61,48 +61,31 @@ export OVERCOOKED_RECORD_ROOT="$LAYOUT_ROOT"
 # make sure output dir exists
 mkdir -p "$LAYOUT_ROOT"
 
-# Handle optimization results based on regen-starts option
+# Handle start locations based on regen-starts option
 if [[ "$REGEN_STARTS" == "true" ]]; then
-  echo "Finding optimal start locations for all levels..."
-  
-  # Clear optimization output to ensure fresh results
-  rm -f "$OPTIMIZATION_OUTPUT"
-  
-  # Collect all optimization results in a single JSON array
-  rm -f "$OPTIMIZATION_OUTPUT"  # Start fresh
-  
-  # Only optimize trials 1-18 (trials 19-36 use auto-generated start locations)
-  for i in $(seq -w 1 18); do
-  level_file="$STIMULI_ROOT/trial_${i}.txt"
-  # skip non-regular files (just in case)
-  [[ -f "$level_file" ]] || continue
+  echo "Finding optimal start locations for all trials..."
 
-  echo "Optimizing start locations for: $level_file"
-  
-  # Run optimization and append result to the array
-  cd "$ROOT" && python3 "$SCRIPT_DIR/optimize_start_locations.py" \
-    --level "$level_file" \
-    --model "greedy" \
-    --seeds 3 \
-    --output "${OPTIMIZATION_OUTPUT}.tmp"
-  
-  # Use Python script to properly concatenate JSON
-  python3 "$SCRIPT_DIR/concat_optimization_results.py" "$OPTIMIZATION_OUTPUT" "${OPTIMIZATION_OUTPUT}.tmp"
+  # Remove existing file to ensure fresh results
+  rm -f "$START_LOCATIONS_FILE"
 
-  # Check if optimization was successful
+  # Run the comprehensive start location finder
+  cd "$ROOT" && python3 code/python/s1_design_inference/find_start_locations.py \
+    --output "$START_LOCATIONS_FILE" \
+    --seeds 3
+
+  # Check if start location generation was successful
   if [[ $? -ne 0 ]]; then
-    echo "Warning: Optimization failed for $level_file, skipping..."
-    rm -f "${OPTIMIZATION_OUTPUT}.tmp"
-  fi
-  done
-else
-  # Check if optimization results exist when not regenerating
-  if [[ ! -f "$OPTIMIZATION_OUTPUT" ]]; then
-    echo "ERROR: Optimization results not found: $OPTIMIZATION_OUTPUT" >&2
-    echo "Please run without --no-regen-starts to generate optimization results first." >&2
+    echo "ERROR: Start location generation failed" >&2
     exit 1
   fi
-  echo "Using existing optimization results: $OPTIMIZATION_OUTPUT"
+else
+  # Check if start locations exist when not regenerating
+  if [[ ! -f "$START_LOCATIONS_FILE" ]]; then
+    echo "ERROR: Start locations file not found: $START_LOCATIONS_FILE" >&2
+    echo "Please run without --no-regen-starts to generate start locations first." >&2
+    exit 1
+  fi
+  echo "Using existing start locations: $START_LOCATIONS_FILE"
 fi
 
 echo "Generating layout tasks..."
@@ -116,51 +99,53 @@ for i in $(seq -w 1 36); do
   # skip non-regular files (just in case)
   [[ -f "$level_file" ]] || continue
 
-  level_name=$(basename "$level_file" .txt)
-  
-  # 1-agent layout (auto-placed) - no start locations needed for layout generation
-  echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 1" >> "$TASKS_FILE"
-  
-  # 2-agent layout - use optimized start locations for trials 1-18 (cooks), auto-placed for trials 19-36 (dishes)
-  if [[ "$level_name" =~ ^trial_(0[1-9]|1[0-8])$ ]]; then
-    # Trials 1-18: Use optimized start locations
-    if [[ -f "$OPTIMIZATION_OUTPUT" ]]; then
-      # Extract start locations from optimization results
-      agent1_loc=$(python3 -c "
+  trial_id="trial_$(printf '%02d' $((10#$i)))"
+
+  # 1-agent layout - use start location from JSON
+  agent1_loc=$(python3 -c "
 import json
 try:
-    data = json.load(open('$OPTIMIZATION_OUTPUT'))
+    with open('$START_LOCATIONS_FILE') as f:
+        data = json.load(f)
     for item in data:
-        if item['level'].endswith('$level_name.txt'):
+        if item['trial_id'] == '$trial_id':
             print(item['agent1_location'])
             break
 except:
     pass
 ")
-      agent2_loc=$(python3 -c "
+
+  if [[ -n "$agent1_loc" ]]; then
+    echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 1 --start-location-model1 \"$agent1_loc\"" >> "$TASKS_FILE"
+  else
+    # Fallback to auto-placement if location not found
+    echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 1" >> "$TASKS_FILE"
+  fi
+
+  # 2-agent layout - extract both locations from JSON
+  agent2_loc=$(python3 -c "
 import json
 try:
-    data = json.load(open('$OPTIMIZATION_OUTPUT'))
+    with open('$START_LOCATIONS_FILE') as f:
+        data = json.load(f)
     for item in data:
-        if item['level'].endswith('$level_name.txt'):
-            print(item['agent2_location'])
+        if item['trial_id'] == '$trial_id':
+            agent2 = item.get('agent2_location')
+            print(agent2 if agent2 is not None else '')
             break
 except:
     pass
 ")
-      
-      if [[ -n "$agent1_loc" && -n "$agent2_loc" ]]; then
-        echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 2 --start-location-model1 \"$agent1_loc\" --start-location-model2 \"$agent2_loc\"" >> "$TASKS_FILE"
-      else
-        echo "Warning: Could not find optimized start locations for $level_name, using auto-placement"
-        echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 2" >> "$TASKS_FILE"
-      fi
-    else
-      echo "Warning: Optimization results not found, using auto-placement for $level_name"
-      echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 2" >> "$TASKS_FILE"
-    fi
+
+  if [[ -n "$agent1_loc" && -n "$agent2_loc" ]]; then
+    # Use optimized locations for 2-agent layout (cooks trials)
+    echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 2 --start-location-model1 \"$agent1_loc\" --start-location-model2 \"$agent2_loc\"" >> "$TASKS_FILE"
+  elif [[ -n "$agent1_loc" ]]; then
+    # Single agent layout (dish trials) - but show 2 locations for consistency in display
+    echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 1 --start-location-model1 \"$agent1_loc\"" >> "$TASKS_FILE"
   else
-    # Trials 19-36: Use auto-placement
+    # Fallback to auto-placement
+    echo "Warning: Could not find start locations for $trial_id, using auto-placement"
     echo "python3 gym-cooking/gym_cooking/main.py --level \"$level_file\" --num-agents 0 --record --layout --output-prefix \"${LAYOUT_ROOT}\" --num-start-locations 2" >> "$TASKS_FILE"
   fi
 done

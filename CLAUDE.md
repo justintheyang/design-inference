@@ -2,9 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+As an agent, you should plan your approach in the `claude/` folder. Be vigilant with keeping the contents of this folder up to date and minimal at all times. 
+
 ## Overview
 
-This is a psychology research project studying how people infer design intent from physical arrangements in a cooking simulation environment. The project uses a modified version of the gym-cooking framework to run computational model simulations and compare them against human behavioral data.
+This is a psychology research project studying how people infer design intent from physical arrangements in a cooking simulation environment. The project uses a modified version of the gym-cooking submodule to run computational model simulations and compare them against human behavioral data.
+
+We are currently working on the study s1_design_inference. 
 
 ## Environment Setup
 
@@ -32,12 +36,17 @@ Required for running the gym-cooking simulations. Separate environment needed fo
 # Activate the simulation environment first
 conda activate design-overcooked
 
-# Run S1 design inference experiment models
-python3 code/python/s1_design_inference/model_runs.py
-
-# Or use the bash wrapper for parallel execution
-bash code/bash/run_model.sh
+bash code/bash/s1_design_inference/submit_all.sh
 ```
+
+**Get model layouts**
+In the behavioral experiment, participants see an empty kitchen layout and judge either (1) whether it's designed for one or two cooks, or (2) whether it's designed to make a tomato salad ("Salad") or an onion salad ("SaladOL"). Generation of these layouts is handled using:
+```bash
+conda activate design-overcooked
+
+bash code/bash/s1_design_inference_get_layouts.sh
+```
+The current implementation is messy and needs to be cleaned up substantially. 
 
 **Data analysis:**
 ```bash
