@@ -18,6 +18,16 @@ import subprocess
 import argparse
 from pathlib import Path
 
+# Debug: check Python version
+print(f"Running with Python {sys.version}")
+try:
+    # Test if capture_output is available
+    subprocess.run(["echo", "test"], capture_output=True, text=True)
+    print("capture_output is supported")
+except TypeError as e:
+    print(f"capture_output not supported: {e}")
+    print("Will use alternative approach")
+
 
 def read_trials_metadata(metadata_path):
     """Read trials metadata and return list of trial info."""
